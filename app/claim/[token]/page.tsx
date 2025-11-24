@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Turnstile from 'react-turnstile';
 import { motion } from 'framer-motion';
@@ -10,8 +10,8 @@ import Link from 'next/link';
 
 type ClaimStatus = 'loading' | 'idle' | 'success' | 'error';
 
-export default function ClaimPage({ params }: { params: Promise<{ token: string }> }) {
-  const { token } = use(params);
+export default function ClaimPage({ params }: { params: { token: string } }) {
+  const { token } = params;
   
   // Hooks de Privy
   const { login, authenticated, user, ready, logout } = usePrivy();
