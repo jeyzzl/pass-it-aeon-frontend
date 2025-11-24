@@ -8,8 +8,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // --- DEBUG ---
-  console.log("Privy App ID:", process.env.NEXT_PUBLIC_PRIVY_APP_ID); 
   return (
     <html lang="es">
       <body>
@@ -20,8 +18,8 @@ export default function RootLayout({
             loginMethods: ['email', 'wallet', 'google', 'apple'],
             appearance: {
               theme: 'dark',
-              accentColor: '#22c55e', // Verde Matrix
-              logo: 'https://imgur.com/a/9AW95Sz', // Opcional
+              accentColor: '#22c55e',
+              logo: 'https://i.imgur.com/pgSIb1F.png',
             },
             // --- CONFIGURACIÓN DE RED (SOLANA) ---
             solanaClusters: [
@@ -30,19 +28,15 @@ export default function RootLayout({
                 rpcUrl: 'https://api.devnet.solana.com' 
               }
             ],
-            // Crea wallets integradas para usuarios de email/google
+            // --- CONFIGURACIÓN DE WALLETS ---
+            // Esto obliga a TypeScript a aceptar la configuración de 'solana'
             embeddedWallets: {
-              // ethereum: {
-              //   createOnLogin: 'users-without-wallets',
-              // },
-
               createOnLogin: 'users-without-wallets',
-
-              // Refuerzo específico si la versión lo soporta
-              // solana: {
-              //   createOnLogin: 'users-without-wallets',
-              // },
-            },
+              requireUserPasswordOnCreate: false,
+              solana: {
+                createOnLogin: 'users-without-wallets',
+              }
+            } as any,
           }}
         >
           {children}
