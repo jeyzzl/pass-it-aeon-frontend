@@ -14,14 +14,18 @@ export default function ClaimPage({ params }: { params: { token: string } }) {
   const { token } = params;
   
   // Hooks de Privy
-  const { login, authenticated, user, ready, logout, linkWallet } = usePrivy();
-  const { wallets } = useWallets(); // Mantenemos esto por si conectan wallet externa
+  const { login, authenticated, user, ready, logout, createWallet } = usePrivy();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { wallets } = useWallets();
 
   const [status, setStatus] = useState<ClaimStatus>('loading');
   const [message, setMessage] = useState('Verificando código...');
   const [childCodes, setChildCodes] = useState<string[]>([]);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   
+  // Estado para controlar la creación automática
+  const [isCreatingWallet, setIsCreatingWallet] = useState(false);
+
   // Estado para la blockchain seleccionada
   const [blockchain, setBlockchain] = useState('solana');
   const [baseUrl, setBaseUrl] = useState('');
@@ -29,7 +33,6 @@ export default function ClaimPage({ params }: { params: { token: string } }) {
   const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
 
   // --- LÓGICA DE DETECCIÓN DE WALLET ROBUSTA ---
-
   // 1. Buscamos activamente una cuenta de Solana en las cuentas vinculadas
   const solanaAccount = user?.linkedAccounts?.find(
     (a: any) => a.type === 'wallet' && a.chainType === 'solana'
@@ -41,12 +44,33 @@ export default function ClaimPage({ params }: { params: { token: string } }) {
   );
 
   // 3. Determinamos la dirección activa con prioridad
-  // @ts-ignore (Ignoramos error de tipado en .address para simplificar)
+  // @ts-ignore
   const activeAddress = solanaAccount?.address || evmAccount?.address || user?.wallet?.address;
 
   // 4. Detectamos qué tipo es la ganadora
   const isEVM = activeAddress?.startsWith('0x');
   const isSolana = activeAddress && !isEVM;
+
+  // --- AUTO-CREACIÓN DE WALLET SOLANA ---
+  useEffect(() => {
+    if (ready && authenticated && !solanaAccount && !isCreatingWallet) {
+      const autoCreateSolana = async () => {
+        try {
+          console.log("⚡ Auto-detect: Usuario sin Solana. Creando wallet...");
+          setIsCreatingWallet(true);
+          // @ts-ignore
+          await createWallet({ chainType: 'solana' });
+          console.log("✅ Wallet Solana creada exitosamente.");
+        } catch (err) {
+          console.error("Error auto-creando wallet:", err);
+        } finally {
+          setIsCreatingWallet(false);
+        }
+      };
+
+      autoCreateSolana();
+    }
+  }, [ready, authenticated, solanaAccount, isCreatingWallet, createWallet]);
 
   useEffect(() => {
     setBaseUrl(window.location.origin);
@@ -55,13 +79,13 @@ export default function ClaimPage({ params }: { params: { token: string } }) {
   // 3. Autoseleccionar la red correcta en el dropdown
   useEffect(() => {
     if (authenticated && activeAddress) {
-      if (isEVM) {
-        setBlockchain('ethereum');
-      } else {
+      if (isSolana) {
         setBlockchain('solana');
+      } else if (isEVM) {
+        setBlockchain('ethereum'); // Fallback visual
       }
     }
-  }, [authenticated, activeAddress, isEVM]);
+  }, [authenticated, activeAddress, isEVM, isSolana]);
 
   // Validar Token al inicio
   useEffect(() => {
@@ -243,109 +267,42 @@ if (status === 'success') {
         {!authenticated ? (
           <div className="flex flex-col items-center gap-6 text-center py-10 border border-zinc-800 rounded-xl bg-zinc-900/50">
             <p className="text-gray-400 px-4">Para reclamar tu recompensa, necesitas identificarte.</p>
-            <button 
-              onClick={login}
-              className="bg-white text-black font-bold py-3 px-8 rounded hover:bg-gray-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]"
-            >
-              CONECTAR / LOGIN
-            </button>
-            <p className="text-xs text-zinc-600">Soporta: Email, Google, MetaMask, Phantom</p>
+            <button onClick={login} className="bg-white text-black font-bold py-3 px-8 rounded hover:bg-gray-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]">CONECTAR / LOGIN</button>
           </div>
         ) : (
           <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             
             <div className="bg-zinc-900 p-4 rounded border border-zinc-700 flex justify-between items-center">
               <div>
-                <p className="text-xs text-gray-500">WALLET ({isEVM ? 'EVM' : 'SOLANA'})</p>
+                <p className="text-xs text-gray-500">WALLET ({isEVM ? 'EVM (No Soportada)' : isCreatingWallet ? 'CREANDO SOLANA...' : 'SOLANA'})</p>
                 <p className="text-sm font-mono text-green-400 truncate w-48">
-                  {activeAddress || 'Detectando...'}
+                  {isCreatingWallet ? 'Generando...' : activeAddress || 'Detectando...'}
                 </p>
               </div>
-              <button onClick={logout} className="text-xs bg-zinc-800 px-2 py-1 rounded hover:bg-zinc-700">
-                Salir
-              </button>
-            </div>
-
-            <div>
-              <label className="block text-gray-400 text-sm mb-2">RED DE DESTINO</label>
-              <select 
-                value={blockchain}
-                onChange={(e) => setBlockchain(e.target.value)}
-                className="w-full bg-zinc-900 border border-zinc-700 p-3 rounded text-white focus:border-green-500 outline-none"
-              >
-                {/* Mostramos las opciones según el tipo de dirección detectada */}
-                {isSolana && <option value="solana">Solana (Devnet)</option>}
-                  
-                {isEVM && (
-                  <>
-                    <option value="base">Base</option>
-                    <option value="ethereum">Ethereum</option>
-                    <option value="bnb">BNB Chain</option>
-                  </>
-                )}
-                
-                {/* Fallback por si acaso falla la detección */}
-                {!isSolana && !isEVM && <option disabled>Detectando redes...</option>}
-              </select>
-              <p className="text-xs text-zinc-600 mt-1">
-                {isEVM ? 'Redes compatibles con EVM detectadas.' : isSolana ? 'Red Solana detectada.' : ''}
-              </p>
+              <button onClick={logout} className="text-xs bg-zinc-800 px-2 py-1 rounded hover:bg-zinc-700">Salir</button>
             </div>
 
             <div className="flex justify-center py-2">
-              <Turnstile
-                sitekey={SITE_KEY}
-                onVerify={(token) => setCaptchaToken(token)}
-                theme="dark"
-              />
+              <Turnstile sitekey={SITE_KEY} onVerify={(token) => setCaptchaToken(token)} theme="dark" />
             </div>
 
-            {/* LÓGICA DE VALIDACIÓN VISUAL */}
             {(() => {
+              // Bloqueamos el botón mientras se crea la wallet automática
               const isSolanaAddress = activeAddress && !activeAddress.startsWith('0x');
-              const readyToClaim = captchaToken && isSolanaAddress;
+              const readyToClaim = captchaToken && isSolanaAddress && !isCreatingWallet;
 
               return (
-                <>
-                  <button 
-                    onClick={handleClaim}
-                    disabled={!readyToClaim}
-                    className={`w-full py-4 rounded font-bold text-lg transition-all
-                      ${readyToClaim
-                        ? 'bg-green-600 hover:bg-green-500 text-black shadow-[0_0_15px_rgba(34,197,94,0.5)]' 
-                        : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                      }`}
-                  >
-                    {isSolanaAddress ? 'RECLAMAR TOKENS SPX' : 'DETECTANDO WALLET SOLANA...'}
-                  </button>
-
-                  {/* Mensaje de ayuda si está conectado con EVM pero falla la detección de Solana */}
-                  {activeAddress && activeAddress.startsWith('0x') && !isSolanaAddress && (
-                    <div className="bg-yellow-900/20 border border-yellow-900 p-3 rounded text-center">
-                      <p className="text-yellow-500 text-xs">
-                        ⚠️ Tienes una billetera de Ethereum, pero actualmente PASS-IT-AEON solo es compatible con billeteras Solana.
-                      </p>
-                      <button
-                        onClick={async () => {
-                          try {
-                            // Forzamos la creación de una wallet de Solana para este usuario
-                            linkWallet();
-                            // Al terminar, el hook usePrivy se actualizará solo y detectará la nueva wallet
-                          } catch (e) {
-                            console.error(e);
-                            alert('Error al vincular wallet: Intenta cerrar sesión y volver a entrar.');
-                          }
-                        }}
-                        className="bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded text-xs shadow-lg"
-                      >
-                        🔗 CONECTAR BILLETERA SOLANA
-                      </button>
-                      <p className="text-[10px] text-yellow-500/60 mt-2">
-                        O cierra sesión y entra con un correo nuevo para generar una wallet automática.
-                      </p>
-                    </div>
-                  )}
-                </>
+                <button 
+                  onClick={handleClaim}
+                  disabled={!readyToClaim}
+                  className={`w-full py-4 rounded font-bold text-lg transition-all
+                    ${readyToClaim
+                      ? 'bg-green-600 hover:bg-green-500 text-black shadow-[0_0_15px_rgba(34,197,94,0.5)]' 
+                      : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+                    }`}
+                >
+                  {isCreatingWallet ? 'CONFIGURANDO CUENTA...' : isSolanaAddress ? 'RECLAMAR TU SPX' : 'ESPERANDO WALLET SOLANA...'}
+                </button>
               );
             })()}
           </div>
