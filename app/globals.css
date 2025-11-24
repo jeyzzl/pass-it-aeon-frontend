@@ -1,10 +1,8 @@
-@import "tailwindcss";
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Aquí agregaremos nuestros estilos cyberpunk luego */
+/* Estilos globales */
 body {
   background: #000;
   color: #fff;
