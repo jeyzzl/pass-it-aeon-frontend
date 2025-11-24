@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import ReferralCard from '@/components/ReferralCard';
+import Link from 'next/link';
 
 type ClaimStatus = 'loading' | 'idle' | 'success' | 'error';
 
@@ -129,30 +130,75 @@ export default function ClaimPage({ params }: { params: Promise<{ token: string 
     );
   }
 
-  if (status === 'success') {
+if (status === 'success') {
     return (
-      <div className="bg-zinc-900 border border-green-900 rounded-xl p-6 mb-8">
-        <h2 className="text-xl text-white mb-4 font-bold animate-pulse text-green-400">ARSENAL DE DISTRIBUCIÓN</h2>
-        <p className="text-sm text-zinc-500 mb-8">
-          Descarga estas tarjetas y compártelas en tus redes. Son de un solo uso.
-        </p>
+      <div className="min-h-screen bg-zinc-950 text-white p-4 font-mono overflow-y-auto">
+        <div className="max-w-3xl mx-auto py-10 text-center">
+          
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-6xl mb-4">🎉</motion.div>
+          <h1 className="text-3xl font-bold text-green-400 mb-2">¡RECLAMO EXITOSO!</h1>
+          
+          <div className="bg-zinc-900/50 border border-zinc-800 p-4 rounded-lg mb-8 inline-block">
+             <p className="text-gray-400 text-sm mb-1">Tokens enviados a:</p>
+             <span className="text-white font-mono bg-black px-2 py-1 rounded border border-zinc-700 text-xs md:text-sm">
+               {activeAddress}
+             </span>
+             <p className="text-green-500 text-xs mt-2">
+                ✅ Transacción confirmada en Solana
+             </p>
+          </div>
 
-        {/* GRID DE TARJETAS VISUALES */}
-        <div className="flex flex-wrap justify-center gap-8">
-          {childCodes.map((code, index) => (
-            <motion.div 
-              key={index}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.3 }}
-            >
-              <ReferralCard 
-                code={code} 
-                index={index} 
-                baseUrl={baseUrl} 
-              />
-            </motion.div>
-          ))}
+          <div className="bg-zinc-900 border border-green-900 rounded-xl p-6 mb-8">
+            <h2 className="text-xl text-white mb-4 font-bold animate-pulse text-green-400"> 
+              MISIÓN: EXPANDIR LA RED 
+            </h2>
+            <p className="text-sm text-zinc-500 mb-6">
+              Descarga estas tarjetas y compártelas. Ganas puntos por cada recluta.
+            </p>
+
+            <div className="flex flex-wrap justify-center gap-8">
+              {childCodes.map((code, index) => (
+                <motion.div 
+                  key={index}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.3 }}
+                >
+                  <ReferralCard 
+                    code={code} 
+                    index={index} 
+                    baseUrl={baseUrl} 
+                  />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+          
+          {/* --- SECCIÓN DE NAVEGACIÓN --- */}
+          <div className="flex flex-col md:flex-row gap-4 justify-center items-center mt-8 pb-10">
+            
+            {/* Botón Principal: Ir al Dashboard */}
+            <Link href="/dashboard" className="w-full md:w-auto">
+              <button className="w-full md:w-auto bg-green-600 hover:bg-green-500 text-black font-bold py-4 px-8 rounded transition-all shadow-[0_0_20px_rgba(34,197,94,0.4)] flex items-center justify-center gap-2">
+                <span>📊</span>
+                VER MI RANGO Y PUNTOS
+              </button>
+            </Link>
+
+            {/* Botón Secundario: Ir al Inicio */}
+            <Link href="/" className="w-full md:w-auto">
+              <button className="w-full md:w-auto bg-zinc-800 hover:bg-zinc-700 text-zinc-300 py-4 px-8 rounded transition-all border border-zinc-700">
+                VOLVER AL INICIO
+              </button>
+            </Link>
+          </div>
+
+          <div className="mt-4">
+             <button onClick={logout} className="text-xs text-zinc-600 underline hover:text-zinc-400">
+               Cerrar Sesión Actual
+             </button>
+          </div>
+
         </div>
       </div>
     );
@@ -198,7 +244,7 @@ export default function ClaimPage({ params }: { params: Promise<{ token: string 
                 onChange={(e) => setBlockchain(e.target.value)}
                 className="w-full bg-zinc-900 border border-zinc-700 p-3 rounded text-white focus:border-green-500 outline-none"
               >
-                {/* Lógica Simplificada: Mostramos las opciones según el tipo de dirección detectada */}
+                {/* Mostramos las opciones según el tipo de dirección detectada */}
                 {isSolana && <option value="solana">Solana (Devnet)</option>}
                   
                 {isEVM && (
@@ -225,17 +271,39 @@ export default function ClaimPage({ params }: { params: Promise<{ token: string 
               />
             </div>
 
-            <button 
-              onClick={handleClaim}
-              disabled={!captchaToken}
-              className={`w-full py-4 rounded font-bold text-lg transition-all
-                ${captchaToken 
-                  ? 'bg-green-600 hover:bg-green-500 text-black shadow-[0_0_15px_rgba(34,197,94,0.5)]' 
-                  : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                }`}
-            >
-              RECLAMAR TOKEN
-            </button>
+            {/* LÓGICA DE VALIDACIÓN VISUAL */}
+            {(() => {
+              // Verificamos si la dirección activa es válida para Solana (Base58)
+              // Las direcciones de Solana tienen entre 32 y 44 caracteres y NO empiezan con 0x
+              const isSolanaAddress = activeAddress && !activeAddress.startsWith('0x');
+              const readyToClaim = captchaToken && isSolanaAddress;
+
+              return (
+                <>
+                  <button 
+                    onClick={handleClaim}
+                    disabled={!readyToClaim}
+                    className={`w-full py-4 rounded font-bold text-lg transition-all
+                      ${readyToClaim
+                        ? 'bg-green-600 hover:bg-green-500 text-black shadow-[0_0_15px_rgba(34,197,94,0.5)]' 
+                        : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+                      }`}
+                  >
+                    {isSolanaAddress ? 'RECLAMAR TOKENS SPX' : 'DETECTANDO WALLET SOLANA...'}
+                  </button>
+
+                  {/* Mensaje de ayuda si está conectado con EVM pero falla la detección de Solana */}
+                  {activeAddress && activeAddress.startsWith('0x') && !isSolanaAddress && (
+                    <div className="bg-yellow-900/20 border border-yellow-900 p-3 rounded text-center">
+                      <p className="text-yellow-500 text-xs">
+                        ⚠️ Detectamos una wallet de Ethereum. Privy debería generar una de Solana automáticamente. 
+                        Si este botón no se habilita, intenta reconectar usando Google o Email.
+                      </p>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </div>
         )}
       </div>

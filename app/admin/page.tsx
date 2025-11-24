@@ -24,12 +24,11 @@ async function loadData() {
       setIsAuth(true);
       setData(dashboardData);
       
-      // --- CORRECCIÓN AQUÍ ---
       const initialEdits: Record<string, string> = {};
       Object.keys(dashboardData.config).forEach(key => {
         let val = dashboardData.config[key];
         
-        // Postgres ya nos devuelve el valor parseado del JSONB (ej. el número 5 o el string "hola")
+        // Postgres ya nos devuelve el valor parseado del JSONB
         // Solo necesitamos convertirlo a string para mostrarlo en el input HTML
         initialEdits[key] = String(val); 
       });

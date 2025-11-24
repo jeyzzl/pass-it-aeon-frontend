@@ -21,7 +21,7 @@ export default function RootLayout({
             loginMethods: ['email', 'wallet', 'google', 'apple'],
             appearance: {
               theme: 'dark',
-              accentColor: '#22c55e', // Nuestro verde Matrix
+              accentColor: '#22c55e', // Verde Matrix
               logo: 'https://tusitio.com/logo.png', // Opcional
             },
             // Crea wallets integradas para usuarios de email/google

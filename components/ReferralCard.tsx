@@ -21,15 +21,19 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
     setDownloading(true);
 
     try {
-      // Esperamos un poco para asegurar que todo esté renderizado
+      // Pequeña pausa para asegurar renderizado
       await new Promise(resolve => setTimeout(resolve, 100));
 
       const canvas = await html2canvas(cardRef.current, {
-        backgroundColor: '#000000',
-        scale: 2, // Mejor calidad (Retina)
-        useCORS: true, // Permite cargar imágenes si tienen headers correctos
-        allowTaint: true, // Permite pintar, aunque a veces bloquea la descarga
-        logging: true, // Para ver errores en consola si falla
+        backgroundColor: null, // Transparente
+        scale: 2, 
+        useCORS: true, 
+        logging: false,
+        // Forzamos a la librería a no intentar interpretar colores complejos
+        onclone: (doc) => {
+          const el = doc.getElementById(`card-capture-${index}`);
+          if (el) el.style.colorScheme = 'light';
+        }
       });
 
       const image = canvas.toDataURL('image/png');
@@ -38,8 +42,8 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
       link.download = `PASS-IT-CARD-${index + 1}.png`;
       link.click();
     } catch (err) {
-      console.error("Error detallado al generar imagen:", err);
-      alert("No se pudo generar la imagen. Revisa la consola para más detalles.");
+      console.error("Error detallado:", err);
+      alert("Error al generar imagen. Revisa la consola.");
     } finally {
       setDownloading(false);
     }
@@ -47,61 +51,53 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
 
   return (
     <div className="flex flex-col items-center gap-3">
-      {/* --- EL DISEÑO DE LA CARTA --- */}
+      
+      {/* --- ÁREA DE CAPTURA --- */}
       <div 
         ref={cardRef}
-        className="relative w-[280px] h-[400px] bg-black rounded-xl overflow-hidden border-4 border-zinc-800 flex flex-col items-center justify-between p-4 shadow-2xl"
-        style={{ 
-          // Fondo degradado CSS puro (sin imágenes externas para evitar CORS)
-          background: `radial-gradient(circle at 50% 0%, #222 0%, #000 100%)`
-        }}
+        id={`card-capture-${index}`}
+        // Usamos justify-center items-center para centrar todo el bloque
+        className="relative w-[280px] h-[400px] rounded-xl overflow-hidden flex flex-col justify-center items-center shadow-2xl"
       >
-        {/* Decoración: Reemplazamos la imagen externa de ruido por puntos CSS */}
+        {/* 1. IMAGEN DE FONDO */}
+        <img 
+          src="/card-background-svg.svg" 
+          alt="Card Background"
+          className="absolute inset-0 w-full h-full object-cover z-0" 
+        />
+
+        {/* 2. CONTENIDO (Agrupado en el centro) */}
+        
+        {/* QR Central */}
         <div 
-          className="absolute inset-0 opacity-20 pointer-events-none"
-          style={{
-            backgroundImage: 'radial-gradient(#333 1px, transparent 1px)',
-            backgroundSize: '10px 10px'
-          }}
-        ></div>
-
-        {/* Header Holográfico */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-50"></div>
-
-        {/* Encabezado */}
-        <div className="text-center z-10 mt-4">
-          <h3 className="text-green-500 font-black text-lg tracking-widest shadow-black drop-shadow-md">
-            PASS-IT-(AE)ON
-          </h3>
-          <p className="text-zinc-500 text-[10px] font-mono">SERIES v0.3 // NODE #{index + 1}</p>
-        </div>
-
-        {/* El QR Central */}
-        <div className="relative z-10 bg-white p-3 rounded-lg">
+          className="relative z-10 p-1 rounded-lg shadow-lg"
+          style={{ backgroundColor: '#ffffff' }} // HEX puro para el fondo blanco del QR
+        >
           <QRCodeSVG 
             value={shareUrl} 
-            size={150} 
+            size={80} 
             level="Q" 
             includeMargin={false}
           />
         </div>
 
-        {/* Footer Stats */}
-        <div className="w-full z-10 mb-2">
-          <div className="bg-zinc-900/90 border border-zinc-700 p-3 rounded text-center backdrop-blur-sm">
-             <p className="text-green-400 text-xs font-mono mb-1 font-bold">REWARD: AUTO-CLAIM</p>
-             <p className="text-zinc-500 text-[9px] uppercase tracking-tighter">Scan to initiate protocol</p>
-          </div>
-          <p className="text-zinc-700 text-[8px] text-center mt-2 font-mono">
-            ID: {code.substring(0, 8)}...{code.substring(code.length - 4)}
-          </p>
+        {/* Footer / Stats (Justo debajo, transparente) */}
+        <div className="relative z-10 w-full mt-3 px-4 text-center">
+           {/* Usamos estilos inline para los colores de texto */}
+           <p 
+             className="text-[7px] font-mono font-bold mb-1"
+             style={{ color: '#126929' }} // HEX para green-400
+           >
+             SCAN TO CLAIM
+           </p>
+           <p 
+             className="text-[5px] uppercase tracking-wider"
+             style={{ color: '#e4e4e7' }} // HEX para zinc-200 (casi blanco)
+           >
+             {code.substring(0, 8)}...{code.substring(code.length - 4)}
+           </p>
         </div>
 
-        {/* Esquinas Cyberpunk */}
-        <div className="absolute top-4 left-4 w-3 h-3 border-t-2 border-l-2 border-green-600"></div>
-        <div className="absolute top-4 right-4 w-3 h-3 border-t-2 border-r-2 border-green-600"></div>
-        <div className="absolute bottom-4 left-4 w-3 h-3 border-b-2 border-l-2 border-green-600"></div>
-        <div className="absolute bottom-4 right-4 w-3 h-3 border-b-2 border-r-2 border-green-600"></div>
       </div>
 
       {/* --- CONTROLES --- */}

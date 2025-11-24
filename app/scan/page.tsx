@@ -82,7 +82,7 @@ export default function ScanPage() {
           </div>
         )}
 
-        {/* Nuestro "Finder" Custom (Overlay estilo Cyberpunk) */}
+        {/* Nuestro "Finder" Custom */}
         <div className="absolute inset-0 pointer-events-none">
           {/* Esquinas verdes */}
           <div className="absolute top-0 left-0 w-16 h-16 border-t-4 border-l-4 border-green-500 rounded-tl-lg"></div>
