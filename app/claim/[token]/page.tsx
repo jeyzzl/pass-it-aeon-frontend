@@ -14,7 +14,7 @@ export default function ClaimPage({ params }: { params: { token: string } }) {
   const { token } = params;
   
   // Hooks de Privy
-  const { login, authenticated, user, ready, logout } = usePrivy();
+  const { login, authenticated, user, ready, logout, createWallet } = usePrivy();
   const { wallets } = useWallets(); // Mantenemos esto por si conectan wallet externa
 
   const [status, setStatus] = useState<ClaimStatus>('loading');
@@ -326,6 +326,21 @@ if (status === 'success') {
                         ⚠️ Detectamos una wallet de Ethereum. Privy debería generar una de Solana automáticamente. 
                         Si este botón no se habilita, intenta reconectar usando Google o Email.
                       </p>
+                      <button
+                        onClick={async () => {
+                          try {
+                            // Forzamos la creación de una wallet de Solana para este usuario
+                            await createWallet({ chainType: 'solana' } as any);
+                            // Al terminar, el hook usePrivy se actualizará solo y detectará la nueva wallet
+                          } catch (e) {
+                            console.error(e);
+                            alert('Error al crear wallet: Intenta cerrar sesión y volver a entrar.');
+                          }
+                        }}
+                        className="bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded text-xs shadow-lg"
+                      >
+                        🛠️ CREAR BILLETERA SOLANA GRATIS
+                      </button>
                     </div>
                   )}
                 </>

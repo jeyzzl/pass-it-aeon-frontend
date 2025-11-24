@@ -10,7 +10,6 @@ export default function RootLayout({
 }) {
   // --- DEBUG ---
   console.log("Privy App ID:", process.env.NEXT_PUBLIC_PRIVY_APP_ID); 
-  // Si esto imprime "undefined" o vacío en tu terminal o consola del navegador, ahí está el error.
   return (
     <html lang="es">
       <body>
@@ -22,17 +21,27 @@ export default function RootLayout({
             appearance: {
               theme: 'dark',
               accentColor: '#22c55e', // Verde Matrix
-              logo: 'https://tusitio.com/logo.png', // Opcional
+              logo: 'https://imgur.com/a/9AW95Sz', // Opcional
             },
+            // --- CONFIGURACIÓN DE RED (SOLANA) ---
+            solanaClusters: [
+              { 
+                name: 'devnet', 
+                rpcUrl: 'https://api.devnet.solana.com' 
+              }
+            ],
             // Crea wallets integradas para usuarios de email/google
             embeddedWallets: {
-              ethereum: {
-                createOnLogin: 'users-without-wallets',
-              },
-              // Si también quieres que genere wallet de Solana automáticamente:
-              solana: {
-                createOnLogin: 'users-without-wallets',
-              },
+              // ethereum: {
+              //   createOnLogin: 'users-without-wallets',
+              // },
+
+              createOnLogin: 'users-without-wallets',
+
+              // Refuerzo específico si la versión lo soporta
+              // solana: {
+              //   createOnLogin: 'users-without-wallets',
+              // },
             },
           }}
         >
