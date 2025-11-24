@@ -101,9 +101,24 @@ export default function ClaimPage({ params }: { params: Promise<{ token: string 
         setChildCodes(response.data.newCodes || []);
         setStatus('success');
       }
-    } catch (error: any) {
+    } catch (err: any) {
+      console.error("Error completo:", err);
+      // 1. Extraemos SOLO el mensaje de texto
+      let errorMessage = 'Error desconocido al procesar la solicitud.';
+
+      if (err.response && err.response.data && err.response.data.error) {
+        // Error que viene del backend (ej: "Token ya reclamado")
+        errorMessage = err.response.data.error;
+      } else if (err.message) {
+        // Error genérico de red o JS
+        errorMessage = err.message;
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      }
+
+      // 2. Guardamos solo el texto
+      setError(errorMessage);
       setStatus('error');
-      setMessage(error.response?.data?.error || 'Error al reclamar.');
     }
   };
 
@@ -309,4 +324,8 @@ if (status === 'success') {
       </div>
     </div>
   );
+}
+
+function setError(errorMessage: string) {
+  throw new Error('Function not implemented.');
 }
