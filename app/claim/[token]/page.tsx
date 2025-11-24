@@ -4,7 +4,6 @@ import { useState, useEffect, use } from 'react';
 import axios from 'axios';
 import Turnstile from 'react-turnstile';
 import { motion } from 'framer-motion';
-import { QRCodeSVG } from 'qrcode.react';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import ReferralCard from '@/components/ReferralCard';
 import Link from 'next/link';
@@ -32,7 +31,6 @@ export default function ClaimPage({ params }: { params: Promise<{ token: string 
   // --- LÓGICA DE DETECCIÓN DE WALLET ROBUSTA ---
 
   // 1. Buscamos activamente una cuenta de Solana en las cuentas vinculadas
-  // Usamos 'any' en el find porque el tipado de linkedAccounts a veces es estricto con los tipos de wallet
   const solanaAccount = user?.linkedAccounts?.find(
     (a: any) => a.type === 'wallet' && a.chainType === 'solana'
   );
@@ -42,8 +40,7 @@ export default function ClaimPage({ params }: { params: Promise<{ token: string 
     (a: any) => a.type === 'wallet' && a.chainType === 'ethereum'
   );
 
-  // 3. DETERMINAMOS LA DIRECCIÓN ACTIVA CON PRIORIDAD
-  // Si existe cuenta de Solana, úsala. Si no, usa EVM.
+  // 3. Determinamos la dirección activa con prioridad
   // @ts-ignore (Ignoramos error de tipado en .address para simplificar)
   const activeAddress = solanaAccount?.address || evmAccount?.address || user?.wallet?.address;
 
@@ -55,7 +52,7 @@ export default function ClaimPage({ params }: { params: Promise<{ token: string 
     setBaseUrl(window.location.origin);
   }, []);
 
-  // 3. Efecto para autoseleccionar la red correcta en el dropdown
+  // 3. Autoseleccionar la red correcta en el dropdown
   useEffect(() => {
     if (authenticated && activeAddress) {
       if (isEVM) {
@@ -75,7 +72,9 @@ export default function ClaimPage({ params }: { params: Promise<{ token: string 
         setMessage('');
       } catch (error: any) {
         setStatus('error');
-        setMessage(error.response?.data?.error || 'Código inválido o expirado.');
+        // Extraemos texto seguro
+        const msg = error.response?.data?.error || 'Código inválido o expirado.';
+        setMessage(typeof msg === 'object' ? JSON.stringify(msg) : String(msg));
       }
     };
     checkToken();
@@ -98,7 +97,16 @@ export default function ClaimPage({ params }: { params: Promise<{ token: string 
       });
 
       if (response.data.success) {
-        setChildCodes(response.data.newCodes || []);
+        // Nos aseguramos de que lo que guardamos en el estado sean STRINGS puros
+        const rawCodes = response.data.newCodes || [];
+        const safeCodes = rawCodes.map((c: any) => {
+          if (typeof c === 'object' && c !== null) {
+             return c.token || JSON.stringify(c);
+          }
+          return String(c);
+        });
+
+        setChildCodes(safeCodes);
         setStatus('success');
       }
     } catch (err: any) {
@@ -107,17 +115,20 @@ export default function ClaimPage({ params }: { params: Promise<{ token: string 
       let errorMessage = 'Error desconocido al procesar la solicitud.';
 
       if (err.response && err.response.data && err.response.data.error) {
-        // Error que viene del backend (ej: "Token ya reclamado")
         errorMessage = err.response.data.error;
       } else if (err.message) {
-        // Error genérico de red o JS
         errorMessage = err.message;
       } else if (typeof err === 'string') {
         errorMessage = err;
       }
 
-      // 2. Guardamos solo el texto
-      setError(errorMessage);
+      // 2. Si por alguna razón sigue siendo objeto, lo convertimos
+      if (typeof errorMessage === 'object') {
+        errorMessage = JSON.stringify(errorMessage);
+      }
+
+      // 3. Usamos setMessage (que es el estado real), NO setError
+      setMessage(errorMessage);
       setStatus('error');
     }
   };
@@ -129,7 +140,7 @@ export default function ClaimPage({ params }: { params: Promise<{ token: string 
       <div className="min-h-screen bg-black text-green-500 flex flex-col items-center justify-center font-mono p-4 space-y-4">
         <div className="animate-spin w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full"></div>
         <div className="text-center animate-pulse">
-            <p>{message || 'Cargando sistema...'}</p>
+            <p>{typeof message === 'string' ? message : 'Cargando...'}</p>
         </div>
       </div>
     );
@@ -139,7 +150,10 @@ export default function ClaimPage({ params }: { params: Promise<{ token: string 
     return (
       <div className="min-h-screen bg-black text-red-500 flex flex-col items-center justify-center font-mono p-4 text-center">
         <h1 className="text-4xl font-bold mb-4">ACCESO DENEGADO</h1>
-        <p className="border border-red-800 p-4 rounded bg-red-900/20 max-w-md">{message}</p>
+        <div className="border border-red-800 p-4 rounded bg-red-900/20 max-w-md break-words">
+          {/* Protección contra objetos en el renderizado */}
+          {typeof message === 'object' ? JSON.stringify(message) : message}
+        </div>
         <a href="/scan" className="mt-8 text-white underline hover:text-red-300">Intentar otro código</a>
       </div>
     );
@@ -165,10 +179,10 @@ if (status === 'success') {
 
           <div className="bg-zinc-900 border border-green-900 rounded-xl p-6 mb-8">
             <h2 className="text-xl text-white mb-4 font-bold animate-pulse text-green-400"> 
-              MISIÓN: EXPANDIR LA RED 
+              MISIÓN: EXPANDIR LA COGNISFERA 
             </h2>
             <p className="text-sm text-zinc-500 mb-6">
-              Descarga estas tarjetas y compártelas. Ganas puntos por cada recluta.
+              Descarga estas tarjetas y compártelas. Ganas puntos por cada Aeon nuevo.
             </p>
 
             <div className="flex flex-wrap justify-center gap-8">
@@ -180,7 +194,7 @@ if (status === 'success') {
                   transition={{ delay: index * 0.3 }}
                 >
                   <ReferralCard 
-                    code={code} 
+                    code={String(code)} 
                     index={index} 
                     baseUrl={baseUrl} 
                   />
@@ -288,8 +302,6 @@ if (status === 'success') {
 
             {/* LÓGICA DE VALIDACIÓN VISUAL */}
             {(() => {
-              // Verificamos si la dirección activa es válida para Solana (Base58)
-              // Las direcciones de Solana tienen entre 32 y 44 caracteres y NO empiezan con 0x
               const isSolanaAddress = activeAddress && !activeAddress.startsWith('0x');
               const readyToClaim = captchaToken && isSolanaAddress;
 
@@ -324,8 +336,4 @@ if (status === 'success') {
       </div>
     </div>
   );
-}
-
-function setError(errorMessage: string) {
-  throw new Error('Function not implemented.');
 }
