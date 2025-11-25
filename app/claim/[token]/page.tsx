@@ -33,44 +33,45 @@ export default function ClaimPage({ params }: { params: { token: string } }) {
   const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
 
   // --- LÓGICA DE DETECCIÓN DE WALLET ROBUSTA ---
-  // 1. Buscamos activamente una cuenta de Solana en las cuentas vinculadas
-  const solanaAccount = user?.linkedAccounts?.find(
-    (a: any) => a.type === 'wallet' && a.chainType === 'solana'
-  );
+  const activeWallet = user?.wallet;
+  const activeAddress = activeWallet?.address;
 
-  // 2. Buscamos cuenta EVM como respaldo
-  const evmAccount = user?.linkedAccounts?.find(
-    (a: any) => a.type === 'wallet' && a.chainType === 'ethereum'
-  );
-
-  // 3. Determinamos la dirección activa con prioridad
-  // @ts-ignore
-  const activeAddress = solanaAccount?.address || evmAccount?.address || user?.wallet?.address;
-
-  // 4. Detectamos qué tipo es la ganadora
+  // Detectamos el tipo
   const isEVM = activeAddress?.startsWith('0x');
   const isSolana = activeAddress && !isEVM;
 
-  // --- AUTO-CREACIÓN DE WALLET SOLANA ---
+  // Efecto para autoseleccionar la red correcta en el dropdown
   useEffect(() => {
-    if (ready && authenticated && !solanaAccount && !isCreatingWallet) {
-      const autoCreateSolana = async () => {
-        try {
-          console.log("⚡ Auto-detect: Usuario sin Solana. Creando wallet...");
-          setIsCreatingWallet(true);
-          // @ts-ignore
-          await createWallet({ chainType: 'solana' });
-          console.log("✅ Wallet Solana creada exitosamente.");
-        } catch (err) {
-          console.error("Error auto-creando wallet:", err);
-        } finally {
-          setIsCreatingWallet(false);
-        }
-      };
-
-      autoCreateSolana();
+    if (authenticated && activeAddress) {
+      if (isSolana) {
+         setBlockchain('solana');
+      } else if (isEVM) {
+         // Si es EVM, sugerimos Base (es barata y popular) o Ethereum
+         setBlockchain('base'); 
+      }
     }
-  }, [ready, authenticated, solanaAccount, isCreatingWallet, createWallet]);
+  }, [authenticated, activeAddress, isEVM, isSolana]);
+
+  // --- AUTO-CREACIÓN DE WALLET SOLANA ---
+  // useEffect(() => {
+  //   if (ready && authenticated && !solanaAccount && !isCreatingWallet) {
+  //     const autoCreateSolana = async () => {
+  //       try {
+  //         console.log("⚡ Auto-detect: Usuario sin Solana. Creando wallet...");
+  //         setIsCreatingWallet(true);
+  //         // @ts-ignore
+  //         await createWallet({ chainType: 'solana' });
+  //         console.log("✅ Wallet Solana creada exitosamente.");
+  //       } catch (err) {
+  //         console.error("Error auto-creando wallet:", err);
+  //       } finally {
+  //         setIsCreatingWallet(false);
+  //       }
+  //     };
+
+  //     autoCreateSolana();
+  //   }
+  // }, [ready, authenticated, solanaAccount, isCreatingWallet, createWallet]);
 
   useEffect(() => {
     setBaseUrl(window.location.origin);
@@ -274,37 +275,53 @@ if (status === 'success') {
             
             <div className="bg-zinc-900 p-4 rounded border border-zinc-700 flex justify-between items-center">
               <div>
-                <p className="text-xs text-gray-500">WALLET ({isEVM ? 'EVM (No Soportada)' : isCreatingWallet ? 'CREANDO SOLANA...' : 'SOLANA'})</p>
+                <p className="text-xs text-gray-500">WALLET ({isEVM ? 'EVM' : 'SOLANA'})</p>
                 <p className="text-sm font-mono text-green-400 truncate w-48">
-                  {isCreatingWallet ? 'Generando...' : activeAddress || 'Detectando...'}
+                  {activeAddress || 'Detectando...'}
                 </p>
               </div>
-              <button onClick={logout} className="text-xs bg-zinc-800 px-2 py-1 rounded hover:bg-zinc-700">Salir</button>
+              <button onClick={logout} className="text-xs bg-zinc-800 px-2 py-1 rounded hover:bg-zinc-700">
+                Salir
+              </button>
+            </div>
+
+            <div>
+              <label className="block text-gray-400 text-sm mb-2">RED DE DESTINO</label>
+              <select 
+                value={blockchain}
+                onChange={(e) => setBlockchain(e.target.value)}
+                className="w-full bg-zinc-900 border border-zinc-700 p-3 rounded text-white focus:border-green-500 outline-none"
+              >
+                {/* Mostramos opciones inteligentes */}
+                {isSolana && <option value="solana">Solana (Devnet)</option>}
+                
+                {isEVM && (
+                  <>
+                    <option value="base">Base (EVM)</option>
+                    <option value="ethereum">Ethereum (EVM)</option>
+                    <option value="bnb">BNB Chain (EVM)</option>
+                  </>
+                )}
+                
+                {!activeAddress && <option disabled>Conecta tu wallet primero...</option>}
+              </select>
             </div>
 
             <div className="flex justify-center py-2">
               <Turnstile sitekey={SITE_KEY} onVerify={(token) => setCaptchaToken(token)} theme="dark" />
             </div>
 
-            {(() => {
-              // Bloqueamos el botón mientras se crea la wallet automática
-              const isSolanaAddress = activeAddress && !activeAddress.startsWith('0x');
-              const readyToClaim = captchaToken && isSolanaAddress && !isCreatingWallet;
-
-              return (
-                <button 
-                  onClick={handleClaim}
-                  disabled={!readyToClaim}
-                  className={`w-full py-4 rounded font-bold text-lg transition-all
-                    ${readyToClaim
-                      ? 'bg-green-600 hover:bg-green-500 text-black shadow-[0_0_15px_rgba(34,197,94,0.5)]' 
-                      : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                    }`}
-                >
-                  {isCreatingWallet ? 'CONFIGURANDO CUENTA...' : isSolanaAddress ? 'RECLAMAR TU SPX' : 'ESPERANDO WALLET SOLANA...'}
-                </button>
-              );
-            })()}
+            <button
+              onClick={handleClaim}
+              disabled={!captchaToken || !activeAddress}
+              className={`w-full py-4 rounded font-bold text-lg transition-all
+                ${captchaToken && activeAddress
+                  ? 'bg-green-600 hover:bg-green-500 text-black shadow-[0_0_15px_rgba(34,197,94,0.5)]' 
+                  : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+                }`}
+            >
+              {activeAddress ? `RECLAMAR EN ${blockchain.toUpperCase()}` : 'CONECTANDO...'}
+            </button>
           </div>
         )}
       </div>

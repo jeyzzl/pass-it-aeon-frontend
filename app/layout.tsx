@@ -21,22 +21,28 @@ export default function RootLayout({
               accentColor: '#22c55e',
               logo: 'https://i.imgur.com/pgSIb1F.png',
             },
-            // --- CONFIGURACIÓN DE RED (SOLANA) ---
-            solanaClusters: [
-              { 
-                name: 'devnet', 
-                rpcUrl: 'https://api.devnet.solana.com' 
+            // CONFIGURACION DE CHAINS
+            supportedChains: [
+              { // Solana Devnet
+                id: 103, // ID interno de Privy para Solana Devnet
+                name: 'Solana Devnet',
+                network: 'solana-devnet',
+                rpcUrls: { default: { http: ['https://api.devnet.solana.com'] } },
+                nativeCurrency: { name: 'Solana', symbol: 'SOL', decimals: 9 },
+              },
+              { // Base Sepolia (Red de pruebas EVM rápida y barata)
+                id: 84532,
+                name: 'Base Sepolia',
+                network: 'base-sepolia',
+                rpcUrls: { default: { http: ['https://sepolia.base.org'] } },
+                nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
               }
             ],
             // --- CONFIGURACIÓN DE WALLETS ---
             // Esto obliga a TypeScript a aceptar la configuración de 'solana'
             embeddedWallets: {
               createOnLogin: 'users-without-wallets',
-              requireUserPasswordOnCreate: false,
-              solana: {
-                createOnLogin: 'users-without-wallets',
-              }
-            } as any,
+            },
           }}
         >
           {children}
