@@ -52,41 +52,20 @@ export default function ClaimPage({ params }: { params: { token: string } }) {
     }
   }, [authenticated, activeAddress, isEVM, isSolana]);
 
-  // --- AUTO-CREACIÓN DE WALLET SOLANA ---
-  // useEffect(() => {
-  //   if (ready && authenticated && !solanaAccount && !isCreatingWallet) {
-  //     const autoCreateSolana = async () => {
-  //       try {
-  //         console.log("⚡ Auto-detect: Usuario sin Solana. Creando wallet...");
-  //         setIsCreatingWallet(true);
-  //         // @ts-ignore
-  //         await createWallet({ chainType: 'solana' });
-  //         console.log("✅ Wallet Solana creada exitosamente.");
-  //       } catch (err) {
-  //         console.error("Error auto-creando wallet:", err);
-  //       } finally {
-  //         setIsCreatingWallet(false);
-  //       }
-  //     };
-
-  //     autoCreateSolana();
-  //   }
-  // }, [ready, authenticated, solanaAccount, isCreatingWallet, createWallet]);
-
   useEffect(() => {
     setBaseUrl(window.location.origin);
   }, []);
 
   // 3. Autoseleccionar la red correcta en el dropdown
-  useEffect(() => {
-    if (authenticated && activeAddress) {
-      if (isSolana) {
-        setBlockchain('solana');
-      } else if (isEVM) {
-        setBlockchain('ethereum'); // Fallback visual
-      }
-    }
-  }, [authenticated, activeAddress, isEVM, isSolana]);
+  // useEffect(() => {
+  //   if (authenticated && activeAddress) {
+  //     if (isSolana) {
+  //       setBlockchain('solana');
+  //     } else if (isEVM) {
+  //       setBlockchain('ethereum'); // Fallback visual
+  //     }
+  //   }
+  // }, [authenticated, activeAddress, isEVM, isSolana]);
 
   // Validar Token al inicio
   useEffect(() => {
@@ -299,7 +278,7 @@ if (status === 'success') {
                   <>
                     <option value="base">Base (EVM)</option>
                     <option value="ethereum">Ethereum (EVM)</option>
-                    <option value="bnb">BNB Chain (EVM)</option>
+                    {/* <option value="bnb">BNB Chain (EVM)</option> */}
                   </>
                 )}
                 
