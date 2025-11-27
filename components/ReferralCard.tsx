@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface ReferralCardProps {
   code: string;
@@ -13,6 +14,13 @@ interface ReferralCardProps {
 export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
+
+  const { language, t } = useLanguage();
+
+  // Lógica de selección de fondo
+  const backgroundImage = language === 'es' 
+    ? '/bg-card-es.png' 
+    : '/bg-card-en.png';
 
   const shareUrl = `${baseUrl}/claim/${code}`;
 
@@ -61,7 +69,7 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
       >
         {/* 1. IMAGEN DE FONDO */}
         <img 
-          src="/card-background-svg.svg" 
+          src={backgroundImage}
           alt="Card Background"
           className="absolute inset-0 w-full h-full object-cover z-0" 
         />
@@ -88,7 +96,7 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
              className="text-[7px] font-mono font-bold mb-1"
              style={{ color: '#126929' }} // HEX para green-400
            >
-             SCAN TO CLAIM
+             {t.escanea_reclamo}
            </p>
            <p 
              className="text-[5px] uppercase tracking-wider"
@@ -106,14 +114,14 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
           onClick={() => { navigator.clipboard.writeText(shareUrl); alert('Link copiado'); }}
           className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white text-xs py-3 rounded transition-colors border border-zinc-700"
         >
-          COPIAR LINK
+          {t.copiar}
         </button>
         <button 
           onClick={downloadImage}
           disabled={downloading}
           className="flex-1 bg-green-900/20 hover:bg-green-900/40 text-green-400 text-xs py-3 rounded transition-colors border border-green-900 flex justify-center items-center gap-1"
         >
-          {downloading ? '...' : '⬇ DESCARGAR'}
+          {downloading ? '...' : '⬇ '+t.descargar}
         </button>
       </div>
     </div>

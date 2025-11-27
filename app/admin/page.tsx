@@ -2,8 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { login, logout, getDashboardData, updateSetting } from './actions';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function AdminPage() {
+  const { language, t } = useLanguage();
+
   const [isAuth, setIsAuth] = useState(false);
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(true);
@@ -47,7 +50,7 @@ async function loadData() {
     if (success) {
       loadData();
     } else {
-      alert('Acceso Denegado');
+      alert(t.acceso_denegado);
     }
   }
 
@@ -55,7 +58,7 @@ async function handleSave(key: string) {
     const val = editValues[key];
     
     // 1. Debug: Verificar que el botón reacciona
-    console.log("Intentando guardar:", key, val);
+    console.log(t.intentando_guardar, key, val);
 
     if (!confirm(`¿Cambiar ${key} a ${val}?`)) return;
     
@@ -64,23 +67,23 @@ async function handleSave(key: string) {
       await updateSetting(key, val);
       
       // 3. Éxito
-      alert('✅ Configuración actualizada con éxito');
+      alert('✅ '+t.guardada);
       loadData(); 
 
     } catch (error: any) {
       // 4. Captura de error
-      console.error("Error al guardar:", error);
-      alert(`❌ Error: ${error.message || 'Falló la actualización'}`);
+      console.error(t.error_guardar, error);
+      alert(`❌ Error: ${error.message || t.fallo_actualizar}`);
     }
   }
 
-  if (loading) return <div className="min-h-screen bg-black text-green-500 flex items-center justify-center font-mono">CONNECTING...</div>;
+  if (loading) return <div className="min-h-screen bg-black text-green-500 flex items-center justify-center font-mono">{t.cargando}</div>;
 
   // --- VISTA: LOGIN ---
   if (!isAuth) {
     return (
       <div className="min-h-screen bg-black flex flex-col items-center justify-center font-mono p-4">
-        <h1 className="text-red-500 text-3xl mb-8 font-bold tracking-widest">RESTRICTED AREA</h1>
+        <h1 className="text-red-500 text-3xl mb-8 font-bold tracking-widest">{t.area_restringida}</h1>
         <form onSubmit={handleLogin} className="flex flex-col gap-4 w-full max-w-xs">
           <input 
             type="password" 

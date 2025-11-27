@@ -1,7 +1,46 @@
-'use client'; // Importante: Privy usa contexto de React
-
-import { PrivyProvider } from '@privy-io/react-auth';
+import type { Metadata } from 'next';
 import './globals.css';
+import PrivyWrapper from '@/components/PrivyWrapper';
+import { LanguageProvider } from '@/context/LanguageContext';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+
+// --- CONFIGURACIÓN SEO Y REDES SOCIALES (VIRAL LOOP) ---
+export const metadata: Metadata = {
+  title: 'Pass It Ae[on] | The Viral Airdrop',
+  description: 'Únete a la resistencia. Reclama tokens SPX gratis y expande la red. Solo por invitación. ¿Romperás la cadena?',
+  
+  // Metadatos para Facebook / Discord / WhatsApp
+  openGraph: {
+    title: 'INVITACIÓN CONFIDENCIAL: Pass It Ae[on]',
+    description: 'Alguien te ha pasado el testigo. Reclama tus tokens SPX antes de que expiren.',
+    url: 'https://passitaeon.com',
+    siteName: 'Pass It Ae[on]',
+    images: [
+      {
+        url: 'https://passitaeon.com/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Pass It Aeon - Viral Network',
+      },
+    ],
+    locale: 'es_MX',
+    type: 'website',
+  },
+  
+  // Metadatos para Twitter / X
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Pass It Ae[on] | SPX Airdrop',
+    description: 'No rompas la cadena. Únete ahora.',
+    images: ['https://passitaeon.com/og-image.jpg'], // La misma imagen
+  },
+  
+  // Iconos
+  icons: {
+    icon: '/logo.png', // Tu logo como favicon
+    shortcut: '/logo.png',
+  },
+};
 
 export default function RootLayout({
   children,
@@ -10,43 +49,21 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body>
-        <PrivyProvider
-          appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''}
-          config={{
-            // Personaliza el login
-            loginMethods: ['email', 'wallet', 'google', 'apple'],
-            appearance: {
-              theme: 'dark',
-              accentColor: '#22c55e',
-              logo: 'https://i.imgur.com/pgSIb1F.png',
-            },
-            // CONFIGURACION DE CHAINS
-            supportedChains: [
-              { // Solana Devnet
-                id: 103, // ID interno de Privy para Solana Devnet
-                name: 'Solana Devnet',
-                network: 'solana-devnet',
-                rpcUrls: { default: { http: ['https://api.devnet.solana.com'] } },
-                nativeCurrency: { name: 'Solana', symbol: 'SOL', decimals: 9 },
-              },
-              { // Base Sepolia (Red de pruebas EVM rápida y barata)
-                id: 84532,
-                name: 'Base Sepolia',
-                network: 'base-sepolia',
-                rpcUrls: { default: { http: ['https://sepolia.base.org'] } },
-                nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-              }
-            ],
-            // --- CONFIGURACIÓN DE WALLETS ---
-            // Esto obliga a TypeScript a aceptar la configuración de 'solana'
-            embeddedWallets: {
-              createOnLogin: 'users-without-wallets',
-            },
-          }}
-        >
-          {children}
-        </PrivyProvider>
+      <body className="bg-black text-white antialiased">
+        {/* 1. Wrapper de Autenticación (Cliente) */}
+        <PrivyWrapper>
+           
+           {/* 2. Wrapper de Idioma (Cliente) */}
+           <LanguageProvider>
+              
+              {/* 3. Botón Flotante de Idioma */}
+              <LanguageSwitcher />
+              
+              {/* 4. La Aplicación */}
+              {children}
+
+           </LanguageProvider>
+        </PrivyWrapper>
       </body>
     </html>
   );
