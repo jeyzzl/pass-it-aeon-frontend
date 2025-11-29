@@ -54,6 +54,7 @@ export const es = {
     reclama_para_recibir: "Reclama un codigo para recibir codigos nuevos.",
     cargando_perfil: "CARGANDO PERFIL...",
     error_perfil: "ERROR CARGANDO PERFIL",
+    error_regenerar: "Error al regenerar codigos. Limite Alcanzado.",
 
 
     // Agrega aquí todos los textos que uses

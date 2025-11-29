@@ -54,4 +54,5 @@ export const en = {
     reclama_para_recibir: "Claim a token to receive distribution codes.",
     cargando_perfil: "LOADING PROFILE...",
     error_perfil: "ERROR LOADING PROFILE",
+    error_regenerar: "Could not regenerate codes. Limit reached.",
 };

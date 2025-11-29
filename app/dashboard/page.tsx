@@ -17,6 +17,7 @@ export default function DashboardPage() {
   
   const [profileData, setProfileData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [regenerating, setRegenerating] = useState(false);
   const [baseUrl, setBaseUrl] = useState('');
 
   // Lógica de wallet
@@ -24,6 +25,8 @@ export default function DashboardPage() {
   const evmAccount = user?.linkedAccounts?.find((a: any) => a.type === 'wallet' && a.chainType === 'ethereum');
   // @ts-ignore
   const activeAddress = solanaAccount?.address || evmAccount?.address || user?.wallet?.address;
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
   useEffect(() => {
     setBaseUrl(window.location.origin);
@@ -52,11 +55,32 @@ export default function DashboardPage() {
     }
   };
 
+  const handleRegenerate = async () => {
+    if (!activeAddress) return;
+    setRegenerating(true);
+    try {
+      await axios.post(`/api/regenerate`, {
+        walletAddress: activeAddress
+      });
+      // Recargamos el perfil para mostrar los nuevos códigos
+      await fetchProfile(); 
+    } catch (error) {
+      console.error("Error regenerating codes", error);
+      alert(t.error_regenerar);
+    } finally {
+      setRegenerating(false);
+    }
+  };
+
   if (!ready || loading) {
     return <div className="min-h-screen bg-black flex items-center justify-center text-green-500 animate-pulse font-mono">{t.cargando_perfil}</div>;
   }
 
   if (!authenticated) return null;
+
+  const maxCodes = profileData?.maxCodes || 3;
+  const currentCodes = profileData?.myCodes?.length || 0;
+  const codesLeft = Math.max(0, maxCodes - currentCodes);
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white font-mono p-4 overflow-y-auto">
@@ -130,26 +154,59 @@ export default function DashboardPage() {
 
             {/* COLUMNA DERECHA */}
             <div className="lg:col-span-2">
-                <div className="bg-zinc-900/30 border border-zinc-800 p-6 rounded-xl min-h-[500px]">
-                    <h2 className="text-xl text-white mb-6 font-bold">{t.codigos_activos}</h2>
-                    {profileData?.myCodes.length === 0 ? (
-                        <div className="text-center py-20 text-zinc-600">
-                        <p>{t.no_codigos}</p>
-                        <p className="text-xs mt-2">{t.reclama_para_recibir}</p>
-                        </div>
-                    ) : (
-                        <div className="flex flex-wrap justify-center gap-6">
-                        {profileData?.myCodes.map((code: string, idx: number) => (
-                            <ReferralCard 
-                            key={code}
-                            code={code}
-                            index={idx}
-                            baseUrl={baseUrl}
-                            />
-                        ))}
-                        </div>
-                    )}
+              <div className="bg-zinc-900/30 border border-zinc-800 p-6 rounded-xl min-h-[500px]">
+                {/* CABECERA DE SECCIÓN DE CÓDIGOS CON BOTÓN REFILL */}
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl text-white font-bold">{t.codigos_activos} ({currentCodes}/{maxCodes})</h2>
+                  {/* BOTÓN REFILL: Solo aparece si hay huecos libres (Visualmente asumimos 3, el backend valida) */}
+                  {currentCodes < maxCodes && (
+                    <button 
+                      onClick={handleRegenerate}
+                      disabled={regenerating}
+                      className="bg-green-600 hover:bg-green-500 disabled:bg-zinc-700 text-black px-4 py-2 rounded text-xs font-bold transition-all flex items-center gap-2"
+                    >
+                      {regenerating ? (
+                        <span className="animate-pulse">PROCESSING...</span>
+                      ) : (
+                        <>
+                          <span>+ REFILL</span>
+                          <span className="bg-black/20 px-1.5 rounded-full text-[10px]">
+                              {codesLeft} LEFT
+                          </span>
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
+
+
+                {/* LISTA DE CÓDIGOS */}
+                {profileData?.myCodes.length === 0 ? (
+                  <div className="text-center py-20 text-zinc-600 border border-dashed border-zinc-800 rounded bg-zinc-900/20">
+                    <p>{t.no_codigos}</p>
+                    <p className="text-xs mt-2 mb-4">{t.reclama_para_recibir || "Generate new codes to invite others."}</p>
+                    {/* Botón grande si no hay ningún código */}
+                    <button 
+                      onClick={handleRegenerate}
+                      disabled={regenerating}
+                      className="text-green-500 underline hover:text-green-400 font-bold"
+                    >
+                      {regenerating ? "GENERATING..." : "CLICK TO GENERATE NEW CODES"}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap justify-center gap-6">
+                    {profileData?.myCodes.map((code: string, idx: number) => (
+                      <ReferralCard 
+                        key={code}
+                        code={code}
+                        index={idx}
+                        baseUrl={baseUrl}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
         </div>
