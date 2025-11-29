@@ -252,7 +252,7 @@ async function handleSave(key: string) {
                   <span className="text-white text-xs font-bold">GENERATED CODES:</span>
                   <button 
                     onClick={() => {
-                      const text = genesisResult.map(c => `https://passitaeon.com/claim?token=${c}`).join('\n');
+                      const text = genesisResult.map(c => `https://passitaeon.com/claim/${c}`).join('\n');
                       navigator.clipboard.writeText(text);
                       alert('Copied to clipboard!');
                     }}
@@ -262,7 +262,7 @@ async function handleSave(key: string) {
                   </button>
                 </div>
                 <pre className="bg-zinc-900/50 p-2 rounded text-[10px] text-green-400 overflow-x-auto h-40 overflow-y-auto select-all whitespace-pre">
-                  {genesisResult.map(c => `https://passitaeon.com/claim?token=${c}`).join('\n')}
+                  {genesisResult.map(c => `https://passitaeon.com/claim/${c}`).join('\n')}
                 </pre>
               </div>
             )}
