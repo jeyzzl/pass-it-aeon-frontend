@@ -55,4 +55,13 @@ export const en = {
     cargando_perfil: "LOADING PROFILE...",
     error_perfil: "ERROR LOADING PROFILE",
     error_regenerar: "Could not regenerate codes. Limit reached.",
+    about_title: "SPX6900 ARCHIVE: PROJECT COGNISPHERE",
+    about_subtitle: "Reality is whatever you choose to believe.",
+    about_description_1: "The S&P 500 is a relic of the old world. A mathematical glass ceiling designed to limit you.",
+    about_description_2: "SPX6900 is not just a token, it's a movement to break the barrier of what is possible. The goal is simple: Flip the S&P 500 and rewrite the rules of decentralized finance.",
+    miro_board_title: "VISUAL TACTICAL MAP",
+    about_interactivo: "INTERACTIVE MODULE",
+    about_navegacion: "USE MOUSE TO NAVIGATE",
+    about_zoom: "ZOOM ENABLED",
+    
 };

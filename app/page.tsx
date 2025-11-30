@@ -91,9 +91,22 @@ export default function Home() {
         </Link>
       </div>
       
-      <footer className="absolute bottom-6 text-xs text-zinc-700 font-mono">
+      {/* <footer className="absolute bottom-6 text-xs text-zinc-700 font-mono">
         // beta v0.1
-      </footer>
+      </footer> */}
+      <div className="absolute bottom-4 w-full flex flex-col items-center gap-2 z-20">
+          
+          {/* Nuevo enlace a About */}
+          <Link href="/about">
+            <button className="text-[10px] text-zinc-500 hover:text-green-400 transition-colors uppercase tracking-[0.2em] border-b border-transparent hover:border-green-500 pb-0.5">
+              [ {t.about_title} ]
+            </button>
+          </Link>
+
+          <footer className="text-[10px] text-zinc-800 font-mono select-none">
+            v1.0.0
+          </footer>
+      </div>
     </main>
   );
 }

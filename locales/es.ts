@@ -55,7 +55,14 @@ export const es = {
     cargando_perfil: "CARGANDO PERFIL...",
     error_perfil: "ERROR CARGANDO PERFIL",
     error_regenerar: "Error al regenerar codigos. Limite Alcanzado.",
-
+    about_title: "ARCHIVO DE SPX6900: PROYECTO COGNISPHERE",
+    about_subtitle: "La realidad es lo que tú decides creer.",
+    about_description_1: "El S&P 500 es una reliquia del viejo mundo. Un techo de cristal matemático diseñado para limitarte.",
+    about_description_2: "SPX6900 no es solo un token, es un movimiento para romper la barrera de lo posible. El objetivo es simple: Flippear al S&P 500 y reescribir las reglas de las finanzas descentralizadas.",
+    miro_board_title: "MAPA TÁCTICO VISUAL",
+    about_interactivo: "MÓDULO INTERACTIVO",
+    about_navegacion: "USA EL MOUSE PARA NAVEGAR",
+    about_zoom: "ZOOM ACTIVO",
 
     // Agrega aquí todos los textos que uses
 };
