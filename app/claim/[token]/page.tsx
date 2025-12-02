@@ -263,7 +263,7 @@ if (status === 'success') {
                 className="w-full bg-zinc-900 border border-zinc-700 p-3 rounded text-white focus:border-green-500 outline-none"
               >
                 {/* Mostramos opciones inteligentes */}
-                {isSolana && <option value="solana">Solana (Devnet)</option>}
+                {isSolana && <option value="solana">Solana</option>}
                 
                 {isEVM && (
                   <>

@@ -17,11 +17,11 @@ export default function PrivyWrapper({ children }: { children: React.ReactNode }
         
         // CONFIGURACION DE CHAINS
         supportedChains: [
-            { // Solana Devnet
-            id: 103, // ID interno de Privy para Solana Devnet
-            name: 'Solana Devnet',
-            network: 'solana-devnet',
-            rpcUrls: { default: { http: ['https://api.devnet.solana.com'] } },
+            { // Solana
+            id: 101, // ID interno de Privy para Solana
+            name: 'Solana',
+            network: 'solana-mainnet',
+            rpcUrls: { default: { http: ['https://solana-mainnet.g.alchemy.com/v2/heAo8ewdiKdcdXd5FYU8Z'] } },
             nativeCurrency: { name: 'Solana', symbol: 'SOL', decimals: 9 },
             },
             { // Base Sepolia (Red de pruebas EVM rápida y barata)
