@@ -1,48 +1,67 @@
 'use client'; 
 
 import { PrivyProvider } from '@privy-io/react-auth';
+import {toSolanaWalletConnectors} from "@privy-io/react-auth/solana";
+
+const solanaMainnet = {
+  id: 101,
+  name: 'Solana',
+  network: 'solana-mainnet',
+  rpcUrls: { 
+    default: { 
+      http: ['https://solana-mainnet.g.alchemy.com/v2/heAo8ewdiKdcdXd5FYU8Z'] 
+    } 
+  },
+  nativeCurrency: { name: 'Solana', symbol: 'SOL', decimals: 9 },
+  blockExplorers: {
+    default: { name: 'Solscan', url: 'https://solscan.io' },
+  },
+}
+
+const solanaConnectors = toSolanaWalletConnectors({
+  // Opcional: si quieres autoconectar si ya están logueados
+  shouldAutoConnect: true,
+});
 
 export default function PrivyWrapper({ children }: { children: React.ReactNode }) {
   return (
     <PrivyProvider
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''}
       config={{
-        // Personaliza el login
-        loginMethods: ['email', 'wallet', 'google', 'apple'],
-        appearance: {
-          theme: 'dark',
-          accentColor: '#22c55e',
-          logo: '/logo.png',
-        },
-        
-        // CONFIGURACION DE CHAINS
-        supportedChains: [
-            { // Solana
-            id: 101, // ID interno de Privy para Solana
-            name: 'Solana',
-            network: 'solana-mainnet',
-            rpcUrls: { default: { http: ['https://solana-mainnet.g.alchemy.com/v2/heAo8ewdiKdcdXd5FYU8Z'] } },
-            nativeCurrency: { name: 'Solana', symbol: 'SOL', decimals: 9 },
-            },
-            { // Base Sepolia (Red de pruebas EVM rápida y barata)
-            id: 84532,
-            name: 'Base Sepolia',
-            network: 'base-sepolia',
-            rpcUrls: { default: { http: ['https://sepolia.base.org'] } },
-            nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-            }
-        ],
 
-        // --- CONFIGURACIÓN DE WALLETS ---
-        // Usamos 'as any' para forzar la configuración de Solana
-        embeddedWallets: {
-          // 1. Activamos Solana explícitamente
+        appearance: {
+          accentColor: '#6A6FF5',
+          theme: '#222224',
+          showWalletLoginFirst: false,
+          logo: '/logo.png',
+          walletChainType: 'ethereum-and-solana',
+          walletList: [
+            'phantom',
+            'metamask',
+            'detected_solana_wallets',
+            'detected_ethereum_wallets',
+            'coinbase_wallet',
+            'rainbow',
+            'okx_wallet',
+            'wallet_connect'
+          ]
+        },
+
+        loginMethods: ['email', 'wallet', 'google', 'apple'],
+
+        supportedChains: [solanaMainnet],
+
+        externalWallets: {
           solana: {
-            createOnLogin: 'users-without-wallets',
-          },
-          // 2. Fallback general
-          createOnLogin: 'users-without-wallets', 
-        } as any, 
+            connectors: solanaConnectors,
+          }
+        },
+
+        embeddedWallets: {
+          showWalletUIs: false,
+          ethereum: { createOnLogin: 'users-without-wallets'},
+          solana: { createOnLogin: 'users-without-wallets'}
+        } as any,
       }}
     >
       {children}
