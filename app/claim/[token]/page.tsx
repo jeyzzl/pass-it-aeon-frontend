@@ -267,8 +267,8 @@ if (status === 'success') {
                 
                 {isEVM && (
                   <>
-                    <option value="base">Base (EVM)</option>
-                    <option value="ethereum">Ethereum (EVM)</option>
+                    <option value="base">Base (EVM) *Devnet</option>
+                    <option value="ethereum">Ethereum (EVM) *Devnet</option>
                     {/* <option value="bnb">BNB Chain (EVM)</option> */}
                   </>
                 )}
