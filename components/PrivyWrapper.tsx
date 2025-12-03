@@ -9,7 +9,8 @@ const solanaMainnet = {
   network: 'solana-mainnet',
   rpcUrls: { 
     default: { 
-      http: ['https://solana-mainnet.g.alchemy.com/v2/heAo8ewdiKdcdXd5FYU8Z'] 
+      http: ['https://solana-mainnet.g.alchemy.com/v2/heAo8ewdiKdcdXd5FYU8Z'],
+      webSocket: ['wss://solana-mainnet.g.alchemy.com/v2/heAo8ewdiKdcdXd5FYU8Z']
     } 
   },
   nativeCurrency: { name: 'Solana', symbol: 'SOL', decimals: 9 },
@@ -20,7 +21,7 @@ const solanaMainnet = {
 
 const solanaConnectors = toSolanaWalletConnectors({
   // Opcional: si quieres autoconectar si ya están logueados
-  shouldAutoConnect: true,
+  shouldAutoConnect: false,
 });
 
 export default function PrivyWrapper({ children }: { children: React.ReactNode }) {
