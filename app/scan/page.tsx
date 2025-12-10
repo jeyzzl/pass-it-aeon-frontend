@@ -1,3 +1,5 @@
+// scan page
+
 'use client';
 
 import { useState } from 'react';

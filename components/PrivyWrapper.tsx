@@ -2,7 +2,9 @@
 
 import { PrivyProvider } from '@privy-io/react-auth';
 import {toSolanaWalletConnectors} from "@privy-io/react-auth/solana";
+import { base } from 'framer-motion/client';
 
+// Solana Configuration
 const solanaMainnet = {
   id: 101,
   name: 'Solana',
@@ -19,8 +21,40 @@ const solanaMainnet = {
   },
 }
 
+// EVM Chain Configurations
+const ethereumMainnet = {
+  id: 1,
+  name: 'Ethereum',
+  network: 'ethereum-mainnet',
+  rpcUrls: { 
+    default: { 
+      http: ['https://eth-mainnet.g.alchemy.com/v2/heAo8ewdiKdcdXd5FYU8Z'],
+      webSocket: ['wss://eth-mainnet.g.alchemy.com/v2/heAo8ewdiKdcdXd5FYU8Z']
+    } 
+  },
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  blockExplorers: {
+    default: { name: 'Etherscan', url: 'https://etherscan.io' },
+  },
+};
+
+const baseMainnet = {
+  id: 8453,
+  name: 'Base',
+  network: 'base-mainnet',
+  rpcUrls: { 
+    default: { 
+      http: ['https://base-mainnet.g.alchemy.com/v2/heAo8ewdiKdcdXd5FYU8Z'],
+      webSocket: ['wss://base-mainnet.g.alchemy.com/v2/heAo8ewdiKdcdXd5FYU8Z']
+    } 
+  },
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  blockExplorers: {
+    default: { name: 'Basescan', url: 'https://basescan.org' },
+  },
+};
+
 const solanaConnectors = toSolanaWalletConnectors({
-  // Opcional: si quieres autoconectar si ya están logueados
   shouldAutoConnect: false,
 });
 
@@ -50,7 +84,7 @@ export default function PrivyWrapper({ children }: { children: React.ReactNode }
 
         loginMethods: ['email', 'wallet', 'google', 'apple'],
 
-        supportedChains: [solanaMainnet],
+        supportedChains: [solanaMainnet, ethereumMainnet, baseMainnet],
 
         externalWallets: {
           solana: {

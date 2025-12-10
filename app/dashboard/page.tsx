@@ -1,3 +1,5 @@
+// dashboard page
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,25 +9,28 @@ import axios from 'axios';
 import ReferralCard from '@/components/ReferralCard';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
+import { getActiveWalletAddress } from '@/lib/walletUtils';
 
 export default function DashboardPage() {
+  // Hooks de Privy
   const { authenticated, user, ready, exportWallet, logout } = usePrivy();
-  const { wallets } = useWallets();
+  
+  // Router
   const router = useRouter();
 
+  // Contexto de Lenguage
   const { language, t } = useLanguage();
   
+  // Estados de Pagina
   const [profileData, setProfileData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [regenerating, setRegenerating] = useState(false);
   const [baseUrl, setBaseUrl] = useState('');
 
-  // Lógica de wallet
-  const solanaAccount = user?.linkedAccounts?.find((a: any) => a.type === 'wallet' && a.chainType === 'solana');
-  const evmAccount = user?.linkedAccounts?.find((a: any) => a.type === 'wallet' && a.chainType === 'ethereum');
-  // @ts-ignore
-  const activeAddress = solanaAccount?.address || evmAccount?.address || user?.wallet?.address;
+  // Wallet activa
+  const activeAddress = getActiveWalletAddress(user);
 
+  // Conexion a Next JS
   const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
   useEffect(() => {

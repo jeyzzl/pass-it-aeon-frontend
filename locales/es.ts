@@ -63,6 +63,9 @@ export const es = {
     about_interactivo: "MÓDULO INTERACTIVO",
     about_navegacion: "USA EL MOUSE PARA NAVEGAR",
     about_zoom: "ZOOM ACTIVO",
+    esperando_confirmacion: "ESPERANDO CONFIRMACION",
+    procesando_transaccion: 'Procesando Transacción',
+    direccion: 'Dirección',
 
     // Agrega aquí todos los textos que uses
 };

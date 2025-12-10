@@ -63,5 +63,8 @@ export const en = {
     about_interactivo: "INTERACTIVE MODULE",
     about_navegacion: "USE MOUSE TO NAVIGATE",
     about_zoom: "ZOOM ENABLED",
+    esperando_confirmacion: "AWAITING CONFIRMATION ON",
+    procesando_transaccion: 'Processing Transaction',
+    direccion: 'Address',
     
 };
