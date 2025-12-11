@@ -82,7 +82,7 @@ export default function PrivyWrapper({ children }: { children: React.ReactNode }
           ]
         },
 
-        loginMethods: ['email', 'wallet', 'google', 'apple'],
+        loginMethods: ['email', 'wallet', 'google','twitter',],
 
         supportedChains: [solanaMainnet, ethereumMainnet, baseMainnet],
 
