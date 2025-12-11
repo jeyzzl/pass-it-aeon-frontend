@@ -8,20 +8,25 @@ import axios from 'axios';
 export default function AdminPage() {
   const { language, t } = useLanguage();
 
+  // --- ESTADO DE AUTENTICACION
   const [isAuth, setIsAuth] = useState(false);
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
   
-  // Datos del Dashboard
+  // --- ESTADO DEL DASHBOARD
   const [data, setData] = useState<any>(null);
   const [editValues, setEditValues] = useState<Record<string, string>>({});
 
+  // --- DATOS DE TOKENS GENESIS
   const [genesisCount, setGenesisCount] = useState(5);
   const [genesisDays, setGenesisDays] = useState(90);
   const [genesisResult, setGenesisResult] = useState<string[]>([]);
   const [genesisLoading, setGenesisLoading] = useState(false);
 
+  // --- ESTADO DE MONITOREO
+  const [monitoringData, setMonitoringData] = useState<any>(null);
+  const [monitoringLoading, setMonitoringLoading] = useState(false);
 
   // Cargar datos al iniciar
   useEffect(() => {
@@ -124,6 +129,18 @@ async function handleSave(key: string) {
     }
   }
 
+  const loadMonitoringData = async () => {
+    setMonitoringLoading(true);
+    try {
+      const res = await axios.get(`/api/admin/monitoring/health?secret=${password}`);
+      setMonitoringData(res.data);
+    } catch (error) {
+      console.error('Error loading monitoring data:', error);
+    } finally {
+      setMonitoringLoading(false);
+    }
+  };
+
   if (loading) return <div className="min-h-screen bg-black text-green-500 flex items-center justify-center font-mono">{t.cargando}</div>;
 
   // --- VISTA: LOGIN ---
@@ -148,7 +165,7 @@ async function handleSave(key: string) {
   }
 
   // --- VISTA: DASHBOARD ---
-   return (
+  return (
     <div className="min-h-screen bg-zinc-950 text-green-500 font-mono p-8 pb-20">
       
       {/* HEADER */}
@@ -268,9 +285,101 @@ async function handleSave(key: string) {
             )}
           </div>
         </div>
-
       </div>
-
+      
+      {/* MONITOREO DE WORKER */}
+      <div className="bg-black border border-blue-900/50 p-6 rounded-xl mt-8">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl text-blue-500 font-bold flex items-center gap-2">
+            <span className="text-2xl">📊</span>
+            SYSTEM MONITORING
+          </h2>
+          <button 
+            onClick={loadMonitoringData}
+            disabled={monitoringLoading}
+            className="text-xs bg-blue-900/20 text-blue-400 px-3 py-1 rounded border border-blue-900 hover:border-blue-500"
+          >
+            {monitoringLoading ? 'REFRESHING...' : 'REFRESH'}
+          </button>
+        </div>
+        
+        {monitoringData && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Worker Health */}
+            <div className="bg-zinc-900/50 p-4 rounded border border-zinc-800">
+              <h3 className="text-sm text-zinc-500 mb-2">WORKER HEALTH</h3>
+              {monitoringData.worker_health.map((worker: any, idx: number) => (
+                <div key={idx} className="flex items-center justify-between mb-2">
+                  <span className="text-xs">{worker.worker_type}</span>
+                  <span className={`text-xs px-2 py-1 rounded ${
+                    worker.status === 'healthy' ? 'bg-green-900/50 text-green-400' :
+                    worker.status === 'error' ? 'bg-red-900/50 text-red-400' :
+                    'bg-yellow-900/50 text-yellow-400'
+                  }`}>
+                    {worker.status.toUpperCase()}
+                  </span>
+                </div>
+              ))}
+            </div>
+            
+            {/* Faucet Balances */}
+            <div className="bg-zinc-900/50 p-4 rounded border border-zinc-800">
+              <h3 className="text-sm text-zinc-500 mb-2">FAUCET BALANCES</h3>
+              {monitoringData?.faucet_balances?.map((balance: any, idx: number) => {
+                // Safely convert to numbers
+                const nativeBalance = typeof balance.native_balance === 'number' 
+                  ? balance.native_balance 
+                  : parseFloat(balance.native_balance || 0);
+                
+                const tokenBalance = typeof balance.token_balance === 'number'
+                  ? balance.token_balance
+                  : parseFloat(balance.token_balance || 0);
+                
+                const isLow = balance.is_low || 
+                  (nativeBalance < (balance.native_threshold || 0.01)) || 
+                  (tokenBalance < (balance.token_threshold || 10));
+                
+                return (
+                  <div key={idx} className="mb-3">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-xs font-bold">{balance.blockchain?.toUpperCase() || 'UNKNOWN'}</span>
+                      <span className={`text-xs ${isLow ? 'text-red-400' : 'text-green-400'}`}>
+                        {isLow ? '⚠️ LOW' : '✅ OK'}
+                      </span>
+                    </div>
+                    <div className="text-xs">
+                      <div>Native: {nativeBalance.toFixed(4)}</div>
+                      <div>SPX: {tokenBalance.toFixed(2)}</div>
+                    </div>
+                    <div className="text-xs text-zinc-600 mt-1">
+                      Last checked: {new Date(balance.last_checked).toLocaleTimeString()}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            
+            {/* System Status */}
+            <div className="bg-zinc-900/50 p-4 rounded border border-zinc-800">
+              <h3 className="text-sm text-zinc-500 mb-2">SYSTEM STATUS</h3>
+              <div className="space-y-3">
+                <div>
+                  <span className="text-xs text-zinc-400">Failed Claims:</span>
+                  <span className="text-xs ml-2 text-red-400 font-bold">
+                    {monitoringData.failed_claims}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-xs text-zinc-400">Last Update:</span>
+                  <span className="text-xs ml-2">
+                    {new Date(monitoringData.timestamp).toLocaleTimeString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
