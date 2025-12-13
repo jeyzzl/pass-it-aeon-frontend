@@ -24,16 +24,34 @@ export default function AdminPage() {
   const [genesisResult, setGenesisResult] = useState<string[]>([]);
   const [genesisLoading, setGenesisLoading] = useState(false);
 
-  // --- ESTADO DE MONITOREO
+  // --- ESTADO DE MONITOREO DE FAUCETS
   const [monitoringData, setMonitoringData] = useState<any>(null);
   const [monitoringLoading, setMonitoringLoading] = useState(false);
+
+  // --- ESTADO DE MONITOREO DE DB
+  const [dbPerformance, setDbPerformance] = useState<any>(null);
+  const [dbPerformanceLoading, setDbPerformanceLoading] = useState(false);
+
+  // Cargar info de funcionamiento DB 
+  const loadDBPerformance = async () => {
+    setDbPerformanceLoading(true);
+    try {
+      const res = await axios.get(`/api/admin/monitoring/db-performance?secret=${password}`);
+      setDbPerformance(res.data);
+    } catch (error) {
+      console.error('Error loading DB performance data:', error);
+      alert('Failed to load DB performance data');
+    } finally {
+      setDbPerformanceLoading(false);
+    }
+  };
 
   // Cargar datos al iniciar
   useEffect(() => {
     loadData();
   }, []);
 
-async function loadData() {
+  async function loadData() {
     setLoading(true);
     setErrorMsg('');
     
@@ -86,7 +104,7 @@ async function loadData() {
     }
   }
 
-async function handleSave(key: string) {
+  async function handleSave(key: string) {
     const val = editValues[key];
 
     console.log(t.intentando_guardar, key, val);
@@ -380,6 +398,90 @@ async function handleSave(key: string) {
           </div>
         )}
       </div>
+      
+      {/* MONITOREO DE LA DB */}
+      <div className="bg-black border border-purple-900/50 p-6 rounded-xl mt-8">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl text-purple-500 font-bold flex items-center gap-2">
+            <span className="text-2xl">📈</span>
+            DATABASE PERFORMANCE
+          </h2>
+          <button 
+            onClick={loadDBPerformance}
+            disabled={dbPerformanceLoading}
+            className="text-xs bg-purple-900/20 text-purple-400 px-3 py-1 rounded border border-purple-900 hover:border-purple-500"
+          >
+            {dbPerformanceLoading ? 'LOADING...' : 'REFRESH METRICS'}
+          </button>
+        </div>
+        
+        {dbPerformance && (
+          <div className="space-y-6">
+            {/* Connection Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-zinc-900/50 p-4 rounded text-center">
+                <div className="text-xs text-zinc-500">Total Connections</div>
+                <div className="text-xl font-bold text-white">{dbPerformance.connections?.total_connections || 0}</div>
+              </div>
+              <div className="bg-zinc-900/50 p-4 rounded text-center">
+                <div className="text-xs text-zinc-500">Active</div>
+                <div className="text-xl font-bold text-green-400">{dbPerformance.connections?.active_connections || 0}</div>
+              </div>
+              <div className="bg-zinc-900/50 p-4 rounded text-center">
+                <div className="text-xs text-zinc-500">Idle</div>
+                <div className="text-xl font-bold text-blue-400">{dbPerformance.connections?.idle_connections || 0}</div>
+              </div>
+              <div className="bg-zinc-900/50 p-4 rounded text-center">
+                <div className="text-xs text-zinc-500">Idle in TX</div>
+                <div className="text-xl font-bold text-yellow-400">{dbPerformance.connections?.idle_in_transaction || 0}</div>
+              </div>
+            </div>
+            
+            {/* Table Sizes */}
+            <div className="bg-zinc-900/30 p-4 rounded border border-zinc-800">
+              <h3 className="text-sm text-zinc-500 mb-3">TABLE SIZES</h3>
+              <div className="space-y-2 max-h-60 overflow-y-auto">
+                {dbPerformance.table_sizes?.map((table: any, idx: number) => (
+                  <div key={idx} className="flex justify-between items-center text-xs p-2 hover:bg-zinc-800/50 rounded">
+                    <span className="font-mono">{table.tablename}</span>
+                    <div className="flex gap-4">
+                      <span className="text-zinc-400">Table: {table.table_size}</span>
+                      <span className="text-purple-400">Index: {table.index_size}</span>
+                      <span className="text-white font-bold">Total: {table.total_size}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Slow Queries */}
+            {dbPerformance.slow_queries && dbPerformance.slow_queries.length > 0 && (
+              <div className="bg-zinc-900/30 p-4 rounded border border-zinc-800">
+                <h3 className="text-sm text-zinc-500 mb-3">SLOW QUERIES (Top 5)</h3>
+                <div className="space-y-3">
+                  {dbPerformance.slow_queries.slice(0, 5).map((query: any, idx: number) => (
+                    <div key={idx} className="p-3 bg-red-900/20 border border-red-900/50 rounded">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs text-red-400 font-bold">Query #{idx + 1}</span>
+                        <span className="text-xs text-yellow-500">{parseFloat(query.mean_exec_time).toFixed(2)}ms avg</span>
+                      </div>
+                      <pre className="text-xs text-zinc-400 overflow-x-auto whitespace-pre-wrap">
+                        {query.query.substring(0, 200)}...
+                      </pre>
+                      <div className="flex justify-between mt-2 text-xs text-zinc-500">
+                        <span>Calls: {query.calls}</span>
+                        <span>Rows: {query.rows}</span>
+                        <span>Cache: {parseFloat(query.hit_percent || 0).toFixed(1)}%</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    
     </div>
   );
 }
