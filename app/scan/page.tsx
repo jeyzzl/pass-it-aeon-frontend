@@ -6,11 +6,15 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Scanner } from '@yudiel/react-qr-scanner';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function ScanPage() {
   const router = useRouter();
   const [error, setError] = useState<string>('');
   const [scanned, setScanned] = useState(false);
+  
+  // Contexto de Lenguage
+  const { language, t } = useLanguage();
 
   // Función que se ejecuta cuando la cámara detecta algo
   const handleScan = (detectedCodes: any[]) => {
@@ -57,7 +61,7 @@ export default function ScanPage() {
       
       {/* Título flotante */}
       <div className="absolute top-10 z-10 text-green-500 font-mono text-xl tracking-widest bg-black/50 px-4 py-1 rounded border border-green-900">
-        ESCANEANDO OBJETIVO...
+        {t.escaneando_codigo}
       </div>
 
       {/* Contenedor de la cámara */}
@@ -80,7 +84,7 @@ export default function ScanPage() {
           />
         ) : (
           <div className="flex items-center justify-center h-full bg-black text-green-500 animate-pulse">
-            PROCESANDO...
+            {t.procesando}
           </div>
         )}
 
@@ -115,7 +119,7 @@ export default function ScanPage() {
         onClick={() => router.push('/')}
         className="mt-8 text-zinc-500 hover:text-white underline font-mono text-sm z-10"
       >
-        VOLVER AL INICIO
+        {t.volver_inicio}
       </button>
     </div>
   );

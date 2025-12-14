@@ -81,7 +81,7 @@ export default function Home() {
       </div>
 
       {/* BOTÓN LEADERBOARD*/}
-      <div className="absolute bottom-20 z-20 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
+      <div className="absolute bottom-40 z-20 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
         <Link href="/leaderboard">
           <button className="flex flex-col items-center gap-1 group">
             <span className="text-xs font-mono text-zinc-400 group-hover:text-white transition-colors">
@@ -100,6 +100,12 @@ export default function Home() {
           <Link href="/about">
             <button className="text-[10px] text-zinc-500 hover:text-green-400 transition-colors uppercase tracking-[0.2em] border-b border-transparent hover:border-green-500 pb-0.5">
               [ {t.about_title} ]
+            </button>
+          </Link>
+
+          <Link href="/faq" className="text-gray-400 hover:text-white transition-colors text-sm">
+            <button className="text-[10px] text-zinc-500 hover:text-green-400 transition-colors uppercase tracking-[0.2em] border-b border-transparent hover:border-green-500 pb-0.5">
+              [ FAQ ]
             </button>
           </Link>
 

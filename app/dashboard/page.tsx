@@ -10,6 +10,7 @@ import ReferralCard from '@/components/ReferralCard';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import { getActiveWalletAddress } from '@/lib/walletUtils';
+import Link from 'next/link';
 
 export default function DashboardPage() {
   // Hooks de Privy
@@ -107,6 +108,13 @@ export default function DashboardPage() {
             >
               🔑 {t.exportar_llaves}
             </button>
+
+            {/* FAQ Link */}
+            <Link href="/faq">
+              <button className="bg-zinc-900 border border-zinc-700 text-zinc-300 px-4 py-2 rounded hover:border-green-500 hover:text-green-500 transition-all text-xs flex items-center gap-2">
+                ❓ FAQ
+              </button>
+            </Link>
 
             {/* Botón Logout */}
             <button 

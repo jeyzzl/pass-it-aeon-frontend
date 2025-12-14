@@ -1,8 +1,13 @@
 import type { Metadata } from 'next';
 import './globals.css';
+
 import PrivyWrapper from '@/components/PrivyWrapper';
-import { LanguageProvider } from '@/context/LanguageContext';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
+
+// import { LanguageProvider } from '@/context/LanguageContext';
+// import LanguageSwitcher from '@/components/LanguageSwitcher';
+
+import ClientLayoutWrapper from './ClientLayoutWrapper';
+
 
 // --- CONFIGURACIÓN SEO Y REDES SOCIALES (VIRAL LOOP) ---
 export const metadata: Metadata = {
@@ -45,25 +50,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
+
   return (
     <html lang="es">
       <body className="bg-black text-white antialiased">
+
         {/* 1. Wrapper de Autenticación (Cliente) */}
         <PrivyWrapper>
            
-           {/* 2. Wrapper de Idioma (Cliente) */}
-           <LanguageProvider>
-              
-              {/* 3. Botón Flotante de Idioma */}
-              <LanguageSwitcher />
-              
-              {/* 4. La Aplicación */}
-              {children}
-
-           </LanguageProvider>
+          {/* Client-side wrapper for interactive elements */}
+          <ClientLayoutWrapper>
+            {children}
+          </ClientLayoutWrapper>
         </PrivyWrapper>
       </body>
     </html>
