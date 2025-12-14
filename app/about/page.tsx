@@ -6,14 +6,12 @@ import { useLanguage } from '@/context/LanguageContext';
 export default function AboutPage() {
   const { t } = useLanguage();
 
-  // Reemplaza esto con el ID real de tu tablero Miro
-  // Para obtenerlo: En Miro -> Share -> Copy embed code -> Busca el src="..."
-  const MIRO_EMBED_URL = "https://miro.com/app/board/uXjVJtzGTKw=/?moveToWidget=3458764647613273416&cot=14"; 
+  const MIRO_EMBED_URL = "https://miro.com/app/live-embed/uXjVJtzGTKw=/?embedMode=view_only_without_ui&moveToWidget=3458764647569694148"; 
 
   return (
     <main className="min-h-screen bg-black text-white font-mono relative overflow-hidden flex flex-col">
       
-      {/* Fondo Animado (Mismo que el Home) */}
+      {/* Fondo Animado */}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none fixed"></div>
       <div className="w-96 h-96 bg-green-900/20 rounded-full blur-[128px] absolute top-0 left-1/2 transform -translate-x-1/2 pointer-events-none"></div>
 
@@ -25,7 +23,6 @@ export default function AboutPage() {
             {t.volver_inicio || "RETURN"}
           </span>
         </Link>
-        {/* <div className="text-xs text-zinc-600">ENCRYPTED CONNECTION // SECURE</div> */}
       </nav>
 
       <div className="relative z-10 max-w-6xl mx-auto w-full p-6 space-y-12 pb-20">
@@ -46,7 +43,7 @@ export default function AboutPage() {
             <p className="text-white font-bold">{t.about_description_2}</p>
           </div>
           
-          {/* Botones de Redes Sociales (Opcional) */}
+          {/* Botones de Redes Sociales */}
           <div className="flex gap-4 pt-4">
             <a 
               href="https://twitter.com/spx6900" 
@@ -78,7 +75,7 @@ export default function AboutPage() {
 
           <div className="w-full h-[600px] md:h-[700px] bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl shadow-green-900/10 relative group">
             
-            {/* Overlay de carga (desaparece cuando carga el iframe, aunque es visual) */}
+            {/* Overlay de carga */}
             <div className="absolute inset-0 bg-zinc-900 flex items-center justify-center -z-10">
                 <span className="text-green-500 animate-pulse">LOADING DATALINK...</span>
             </div>
@@ -88,10 +85,11 @@ export default function AboutPage() {
               height="100%"
               src={MIRO_EMBED_URL}
               allowFullScreen
+              referrerPolicy="strict-origin-when-cross-origin"
               className="w-full h-full filter grayscale hover:grayscale-0 transition-all duration-500 opacity-90 hover:opacity-100"
             ></iframe>
 
-            {/* Decoración de esquina tecnológica */}
+            {/* Decoración de esquina */}
             <div className="absolute bottom-0 right-0 p-4 pointer-events-none">
                 <div className="border-r-2 border-b-2 border-green-500 w-8 h-8"></div>
             </div>
