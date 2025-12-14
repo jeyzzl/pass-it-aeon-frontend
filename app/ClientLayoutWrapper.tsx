@@ -38,13 +38,13 @@ export default function ClientLayoutWrapper({
       </button>
 
       {/* Add Help Button for mobile */}
-      <button
+      {/* <button
         onClick={() => setShowInstructions(true)}
         className="fixed top-6 right-6 z-40 md:hidden w-10 h-10 rounded-full bg-gradient-to-r from-green-600 to-emerald-500 text-black font-bold text-sm shadow-lg flex items-center justify-center"
         aria-label="Help"
       >
         ?
-      </button>
+      </button> */}
 
       {/* 2. Wrapper de Idioma (Cliente) */}
       <LanguageProvider>

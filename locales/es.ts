@@ -133,7 +133,7 @@ export const es = {
     inst_c1_visual_1:"Encuentra un código QR",
     inst_c1_visual_2:"Escanea QR",
     // C2
-    inst_c2_titulo:"Autentícate & Reclama",
+    inst_c2_titulo:"Ingresa & Reclama",
     inst_c2_subtitulo:"Autentícate con tu email, sociales ó tu aplicación de billetera preferida (MetaMask, Phantom, etc.).",
     inst_c2_detalles_a:"Autentícate por email, redes sociales o billetera.",
     inst_c2_detalles_b:"Selecciona tu red preferida",

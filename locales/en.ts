@@ -131,7 +131,7 @@ export const en = {
     inst_c1_detalles_b:"Scan with 'Scan Code' button or camera app",
     inst_c1_visual_1:"Find QR Code",
     inst_c1_visual_2:"Scan QR",
-    inst_c2_titulo:"Authenticate & Claim",
+    inst_c2_titulo:"Log in & Claim",
     inst_c2_subtitulo:"Authenticate with email, Google, or your preferred wallet app (MetaMask, Phantom, etc.)",
     inst_c2_detalles_a:"Authenticate via email, socials or wallet",
     inst_c2_detalles_b:"Select your preferred blockchain",
