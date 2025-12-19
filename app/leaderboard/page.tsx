@@ -11,7 +11,7 @@ interface LeaderboardEntry {
 }
 
 export default function LeaderboardPage() {
-  const { t, language, toggleLanguage } = useLanguage(); // Hook de traducción
+  const { t } = useLanguage();
   const [data, setData] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
 

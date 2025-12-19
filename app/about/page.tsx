@@ -73,7 +73,7 @@ export default function AboutPage() {
              </h2>
           </div>
 
-          <div className="w-full h-[600px] md:h-[700px] bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl shadow-green-900/10 relative group">
+          <div className="mb-4 w-full h-[600px] md:h-[700px] bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl shadow-green-900/10 relative group">
             
             {/* Overlay de carga */}
             <div className="absolute inset-0 bg-zinc-900 flex items-center justify-center -z-10">
@@ -97,6 +97,15 @@ export default function AboutPage() {
                 <div className="border-l-2 border-t-2 border-green-500 w-8 h-8"></div>
             </div>
           </div>
+
+          <a 
+            href="https://miro.com/app/board/uXjVJtzGTKw=/?moveToWidget=3458764647569694148&cot=14" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="px-4 py-2 bg-zinc-900 border border-zinc-700 rounded hover:border-blue-400 hover:text-blue-400 transition-all text-xs"
+          >
+            {t.about_miro}
+          </a>
           
           <p className="text-center text-xs text-zinc-600 mt-4">
             {t.about_interactivo} // {t.about_navegacion} // {t.about_zoom}

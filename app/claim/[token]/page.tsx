@@ -17,30 +17,30 @@ export default function ClaimPage({ params }: { params: { token: string } }) {
   // --- TOKEN ---
   const { token } = params;
   
-  // Contexto de Lenguage
+  // --- Contexto de Lenguage ---
   const { language, t } = useLanguage();
   
-  // Hooks de Privy
+  // --- Hooks de Privy ---
   const { login, authenticated, user, ready, logout, createWallet } = usePrivy();
 
-  // Estado de la pagina
+  // --- Estado de la pagina ---
   const [status, setStatus] = useState<ClaimStatus>('loading');
   const [message, setMessage] = useState(t.verificando_codigo);
   const [childCodes, setChildCodes] = useState<string[]>([]);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
-  // Estado para select de blockchain para reclamo
+  // --- Estado para select de blockchain para reclamo ---
   const [blockchain, setBlockchain] = useState('solana');
   const [baseUrl, setBaseUrl] = useState('');
 
-  // Estado para seguir el status del reclamo
+  // --- Estado para seguir el status del reclamo ---
   const [claimId, setClaimId] = useState<string | null>(null);
   const [txStatus, setTxStatus] = useState<'pending' | 'success' | 'failed' | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [explorerLink, setExplorerLink] = useState<string | null>(null);
   const [pollingError, setPollingError] = useState<string | null>(null);
 
-  // Conexion a Next JS 
+  // --- Conexion a Next JS ---
   const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
 
   // --- DETECCIÓN DE WALLET ---
@@ -56,7 +56,6 @@ export default function ClaimPage({ params }: { params: { token: string } }) {
       if (isSolana) {
          setBlockchain('solana');
       } else if (isEVM) {
-         // Si es EVM, sugerimos Base (es barata y popular) o Ethereum
          setBlockchain('base'); 
       }
     }
@@ -76,7 +75,7 @@ export default function ClaimPage({ params }: { params: { token: string } }) {
         setMessage('');
       } catch (error: any) {
         setStatus('error');
-        // Extraemos texto seguro
+        // Texto seguro
         const msg = error.response?.data?.error || t.codigo_invalido;
         setMessage(typeof msg === 'object' ? JSON.stringify(msg) : String(msg));
       }
@@ -87,7 +86,6 @@ export default function ClaimPage({ params }: { params: { token: string } }) {
   // Efecto para limpiar el state
   const cleanupRef = useRef<(() => void) | null>(null);
   
-  // Add a cleanup effect
   useEffect(() => {
     return () => {
       if (cleanupRef.current) {
@@ -156,7 +154,7 @@ export default function ClaimPage({ params }: { params: { token: string } }) {
           },
 
           interval: 5000,
-          maxAttempts: 60 // 5 minutes
+          maxAttempts: 60 // 5 minutos
         });
 
         // Clean up

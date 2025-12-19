@@ -63,6 +63,7 @@ export const es = {
     about_interactivo: "MÓDULO INTERACTIVO",
     about_navegacion: "USA EL MOUSE PARA NAVEGAR",
     about_zoom: "ZOOM ACTIVO",
+    about_miro: "VER BOARD COMPLETO",
     esperando_confirmacion: "ESPERANDO CONFIRMACION",
     procesando_transaccion: 'Procesando Transacción',
     direccion: 'Dirección',
@@ -103,12 +104,12 @@ export const es = {
     r7:"Los códigos QR caducan por defecto a las 72 horas. Puedes consultar la fecha de caducidad en tu panel de control. Los códigos caducados no se pueden reclamar.",
     r8:"Referencias directas: 100 puntos. Referencias de nietos: 20 % de los puntos directos (20 puntos). Los puntos se actualizan inmediatamente cuando alguien reclama tu código.",
     r9:"Usamos Privy para una autenticación segura. Tu mantienes el control de tus claves privadas. Nunca te solicitaremos tu frase semilla. En el caso de las billeteras integradas, Privy gestiona la seguridad.",
-    r10:"¡Sí! El juego es completamente gratis. Solo tienes que pagar las comisiones de gas de la blockchain al reclamar tokens (que cubrimos a través de nuestra faucet).",
+    r10:"¡Sí! El juego es completamente gratis. Solo tienes que pagar las comisiones de gas de la blockchain al reclamar tokens (que nosotros cubrimos a través de nuestra faucet).",
      // --- FAQ CARTAS
     faq_cartas_titulos:"Necesitas más ayuda?",
     faq_c1_titulo:"Tutorial del Juego",
-    faq_c1_subtitulo:"Aprende a jugar con nuestra guía paso a paso",
-    faq_c1_accion:"Ver tutorial",
+    faq_c1_subtitulo:"Da click en el boton '?' y aprende a jugar con nuestra guía paso a paso",
+    faq_c1_accion:"Da click en '?'",
     faq_c2_titulo:"Comunidad",
     faq_c2_subtitulo:"Únete a nuestro Telegram para hacer preguntas y conectarte con Aeons.",
     faq_c2_accion:"Únete a Telegram",
@@ -128,7 +129,7 @@ export const es = {
     // C2
     inst_c1_titulo:"Escanea",
     inst_c1_subtitulo:"Utiliza tu cámara para escanear un código QR y reclamar tokens SPX6900.",
-    inst_c1_detalles_a:"Encuentra/Recibe un código QR (ó enlace de reclamación).",
+    inst_c1_detalles_a:"Encuentra ó Recibe un código QR (ó enlace de reclamación).",
     inst_c1_detalles_b:"Usa el botón [Escanear Código] ó tu aplicación de cámara.",
     inst_c1_visual_1:"Encuentra un código QR",
     inst_c1_visual_2:"Escanea QR",
@@ -150,7 +151,7 @@ export const es = {
     // C4
     inst_c4_titulo:"Sube de lugar",
     inst_c4_subtitulo:"Observa tu puntuación aumentar y compite en la clasificación global.",
-    inst_c4_detalles_a:"Puntos por referencias directas",
-    inst_c4_detalles_b:"Bonificación por referencias secundarias",
-    inst_c4_detalles_c:"Los mejores jugadores destacados a nivel mundial",
+    inst_c4_detalles_a:"Gana puntos por referencias directas",
+    inst_c4_detalles_b:"Puntos de bonificación por referencias secundarias",
+    inst_c4_detalles_c:"Ve los mayores jugadores destacados a nivel mundial",
 };

@@ -13,19 +13,18 @@ export default function ScanPage() {
   const [error, setError] = useState<string>('');
   const [scanned, setScanned] = useState(false);
   
-  // Contexto de Lenguage
-  const { language, t } = useLanguage();
+  // --- CONTEXTO DE LENGUAJE ---
+  const { t } = useLanguage();
 
-  // Función que se ejecuta cuando la cámara detecta algo
+  // --- MANEJO DE SCAN ---
   const handleScan = (detectedCodes: any[]) => {
     if (scanned) return; // Evitar lecturas múltiples muy rápidas
     
     if (detectedCodes && detectedCodes.length > 0) {
       const rawValue = detectedCodes[0].rawValue;
       
-      // LÓGICA DE PARSEO:
-      // El QR puede ser "http://tusitio.com/claim/TOKEN" o solo "TOKEN"
-      // Intentamos extraer la última parte si es una URL.
+      // --- LÓGICA DE PARSEO ---
+      // Extraer la última parte si es una URL
       let token = rawValue;
       
       if (rawValue.includes('/claim/')) {
@@ -42,7 +41,7 @@ export default function ScanPage() {
 
       if (token) {
         setScanned(true);
-        // Vibración si el dispositivo lo soporta (feedback táctil)
+        // Feedback táctil
         if (navigator.vibrate) navigator.vibrate(200);
         
         // Redirigir a la página de reclamo
@@ -51,6 +50,7 @@ export default function ScanPage() {
     }
   };
 
+  // --- MANEJO DE ERRORES ---
   const handleError = (err: any) => {
     console.error(err);
     setError('No pudimos acceder a la cámara. Asegúrate de dar permisos.');

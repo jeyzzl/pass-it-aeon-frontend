@@ -177,8 +177,8 @@ export default function FAQPage() {
               <h3 className="font-bold mb-2">{t.faq_c1_titulo}</h3>
               <p className="text-gray-400 text-sm mb-4">
                 {t.faq_c1_subtitulo}
-              </p>
-              <Link href="/about" className="text-green-500 hover:text-green-400 text-sm font-medium">
+              </p>  
+              <Link href="#" className="text-green-500 hover:text-green-400 text-sm font-medium">
                 {t.faq_c1_accion} →
               </Link>
             </div>

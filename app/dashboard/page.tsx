@@ -3,7 +3,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-// 1. Agregamos 'logout' al destructuring
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import axios from 'axios';
 import ReferralCard from '@/components/ReferralCard';
@@ -20,7 +19,7 @@ export default function DashboardPage() {
   const router = useRouter();
 
   // Contexto de Lenguage
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
   
   // Estados de Pagina
   const [profileData, setProfileData] = useState<any>(null);
@@ -31,9 +30,10 @@ export default function DashboardPage() {
   // Wallet activa
   const activeAddress = getActiveWalletAddress(user);
 
-  // Conexion a Next JS
+  // --- Conexion a Next JS
   const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
+  // --- Efectos de perfil
   useEffect(() => {
     setBaseUrl(window.location.origin);
   }, []);
@@ -50,6 +50,7 @@ export default function DashboardPage() {
     }
   }, [authenticated, activeAddress]);
 
+  // Perfil de usuario
   const fetchProfile = async () => {
     try {
       const res = await axios.get(`/api/profile/${activeAddress}`);
@@ -61,6 +62,7 @@ export default function DashboardPage() {
     }
   };
 
+  // --- MANEJAR RE-GENERACION
   const handleRegenerate = async () => {
     if (!activeAddress) return;
     setRegenerating(true);
@@ -68,7 +70,7 @@ export default function DashboardPage() {
       await axios.post(`/api/regenerate`, {
         walletAddress: activeAddress
       });
-      // Recargamos el perfil para mostrar los nuevos códigos
+
       await fetchProfile(); 
     } catch (error) {
       console.error("Error regenerating codes", error);
@@ -78,18 +80,31 @@ export default function DashboardPage() {
     }
   };
 
+  // --- VSITA: CARGANDO ---
   if (!ready || loading) {
     return <div className="min-h-screen bg-black flex items-center justify-center text-green-500 animate-pulse font-mono">{t.cargando_perfil}</div>;
   }
 
+  // --- VISTA: NO ESTA AUTENTICADO ---
   if (!authenticated) return null;
 
+  // Codigos por usuario
   const maxCodes = profileData?.maxCodes || 3;
   const currentCodes = profileData?.myCodes?.length || 0;
   const codesLeft = Math.max(0, maxCodes - currentCodes);
 
+  // --- VISTA: DASHBOARD
   return (
     <div className="min-h-screen bg-zinc-950 text-white font-mono p-4 overflow-y-auto">
+      <div className="top-6 left-10 z-20">
+        <Link href="/">
+            <img 
+              src="/logo.png" 
+              alt="Pass It Aeon" 
+              className="w-28 md:w-40 h-auto object-contain opacity-80 hover:opacity-100 transition-opacity cursor-pointer" 
+            />
+        </Link>
+      </div>
       <div className="max-w-5xl mx-auto py-8">
         
         {/* HEADER */}
