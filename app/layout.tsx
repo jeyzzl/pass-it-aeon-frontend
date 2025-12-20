@@ -1,13 +1,11 @@
+// client-pass-it/layout.tsx
+
 import type { Metadata } from 'next';
 import './globals.css';
 
 import PrivyWrapper from '@/components/PrivyWrapper';
 
-// import { LanguageProvider } from '@/context/LanguageContext';
-// import LanguageSwitcher from '@/components/LanguageSwitcher';
-
 import ClientLayoutWrapper from './ClientLayoutWrapper';
-
 
 // --- CONFIGURACIÓN SEO Y REDES SOCIALES (VIRAL LOOP) ---
 export const metadata: Metadata = {

@@ -1,4 +1,5 @@
 'use client';
+// client-pass-it/components/InstructionsModal.tsx
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';

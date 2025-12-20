@@ -1,4 +1,5 @@
-'use client'; // <--- Importante para usar hooks
+'use client';
+// client-pass-it/page.tsx
 
 import Link from 'next/link';
 import { usePrivy } from '@privy-io/react-auth';

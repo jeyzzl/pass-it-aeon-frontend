@@ -1,3 +1,4 @@
+// client-pass-it/lib/db.ts
 import { Pool } from 'pg';
 
 // Definimos un tipo global para evitar que TypeScript se queje

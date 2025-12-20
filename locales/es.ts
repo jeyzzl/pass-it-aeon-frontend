@@ -1,3 +1,5 @@
+// client-pass-it/locales/es.ts
+
 export const es = {
     login: "[ INICIAR SESIÓN ]",
     escanea_codigo: "[ ESANEAR CÓDIGO ]",

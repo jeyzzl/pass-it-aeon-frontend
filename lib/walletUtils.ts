@@ -1,7 +1,5 @@
-/**
- * Standardized wallet address resolution for Privy
- * Uses the same logic across all pages
- */
+// client-pass-it/lib/walletUtils.ts
+
 export const getActiveWalletAddress = (user: any): string | null => {
   if (!user) return null;
   

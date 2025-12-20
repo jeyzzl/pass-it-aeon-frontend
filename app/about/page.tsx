@@ -1,4 +1,5 @@
-'use client';
+'use client'; 
+// client-pass-it/app/about/page.tsx
 
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';

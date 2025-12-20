@@ -1,4 +1,5 @@
 'use client';
+// client-pass-it/components/LanguageSwitcher.tsx
 
 import { useLanguage } from '@/context/LanguageContext';
 

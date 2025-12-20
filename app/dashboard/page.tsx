@@ -1,6 +1,5 @@
-// dashboard page
-
 'use client';
+// client-pass-it/app/dashboard/page.tsx
 
 import { useState, useEffect } from 'react';
 import { usePrivy, useWallets } from '@privy-io/react-auth';

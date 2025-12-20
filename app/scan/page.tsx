@@ -1,6 +1,5 @@
-// scan page
-
 'use client';
+// client-pass-it/app/scan/page.tsx
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';

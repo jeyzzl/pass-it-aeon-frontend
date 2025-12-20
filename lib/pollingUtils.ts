@@ -1,6 +1,5 @@
-/**
- * Utility for polling claim status
- */
+// client-pass-it/lib/pollingUtils.ts
+
 interface ClaimStatus {
   claimId: string;
   status: 'pending' | 'success' | 'failed';

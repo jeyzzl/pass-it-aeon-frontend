@@ -1,4 +1,5 @@
 'use client';
+// client-pass-it/app/admin/page.tsx
 
 import { useState, useEffect } from 'react';
 import { login, logout, getDashboardData, updateSetting } from './actions';

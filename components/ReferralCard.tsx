@@ -1,4 +1,5 @@
 'use client';
+// client-pass-it/components/ReferralCard.tsx
 
 import { useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';

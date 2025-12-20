@@ -1,4 +1,5 @@
 'use client';
+// client-pass-it/app/claim/[token]/page.tsx
 
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';

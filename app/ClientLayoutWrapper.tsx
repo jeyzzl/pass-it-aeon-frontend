@@ -1,5 +1,5 @@
-// app/ClientLayoutWrapper.tsx
 'use client';
+// client-pass-it/ClientLayoutWrapper.tsx
 
 import { useState, useEffect } from 'react';
 import { LanguageProvider } from '@/context/LanguageContext';

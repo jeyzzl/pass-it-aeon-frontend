@@ -1,4 +1,5 @@
-'use client'; 
+'use client';
+// client-pass-it/components/PrivyWrapper.tsx
 
 import { PrivyProvider } from '@privy-io/react-auth';
 import {toSolanaWalletConnectors} from "@privy-io/react-auth/solana";
@@ -11,8 +12,8 @@ const solanaMainnet = {
   network: 'solana-mainnet',
   rpcUrls: { 
     default: { 
-      http: ['https://solana-mainnet.g.alchemy.com/v2/heAo8ewdiKdcdXd5FYU8Z'],
-      webSocket: ['wss://solana-mainnet.g.alchemy.com/v2/heAo8ewdiKdcdXd5FYU8Z']
+      http: [`https://solana-mainnet.g.alchemy.com/v2/${process.env.RPC_URL_KEY}`],
+      webSocket: [`wss://solana-mainnet.g.alchemy.com/v2/${process.env.RPC_URL_KEY}`]
     } 
   },
   nativeCurrency: { name: 'Solana', symbol: 'SOL', decimals: 9 },
@@ -28,8 +29,8 @@ const ethereumMainnet = {
   network: 'ethereum-mainnet',
   rpcUrls: { 
     default: { 
-      http: ['https://eth-mainnet.g.alchemy.com/v2/heAo8ewdiKdcdXd5FYU8Z'],
-      webSocket: ['wss://eth-mainnet.g.alchemy.com/v2/heAo8ewdiKdcdXd5FYU8Z']
+      http: [`https://eth-mainnet.g.alchemy.com/v2/${process.env.RPC_URL_KEY}`],
+      webSocket: [`wss://eth-mainnet.g.alchemy.com/v2/${process.env.RPC_URL_KEY}`]
     } 
   },
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
@@ -44,8 +45,8 @@ const baseMainnet = {
   network: 'base-mainnet',
   rpcUrls: { 
     default: { 
-      http: ['https://base-mainnet.g.alchemy.com/v2/heAo8ewdiKdcdXd5FYU8Z'],
-      webSocket: ['wss://base-mainnet.g.alchemy.com/v2/heAo8ewdiKdcdXd5FYU8Z']
+      http: [`https://base-mainnet.g.alchemy.com/v2/${process.env.RPC_URL_KEY}`],
+      webSocket: [`wss://base-mainnet.g.alchemy.com/v2/${process.env.RPC_URL_KEY}`]
     } 
   },
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },

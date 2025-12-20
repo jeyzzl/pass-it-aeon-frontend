@@ -1,4 +1,5 @@
 'use client';
+// client-pass-it/app/leaderboard/page.tsx
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';

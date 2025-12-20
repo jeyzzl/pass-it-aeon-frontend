@@ -1,4 +1,6 @@
 'use client';
+// client-pass-it/context/LanguageContext.tsx
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { es } from '@/locales/es';
 import { en } from '@/locales/en';

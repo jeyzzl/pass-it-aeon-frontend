@@ -1,3 +1,5 @@
+// client-pass-it/locales/en.ts
+
 export const en = {
     login: "[ LOGIN ]",
     escanea_codigo: "[ SCAN CODE ]",
