@@ -5,6 +5,7 @@ import { useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
 import { useLanguage } from '@/context/LanguageContext';
+import { Download, Copy, Share2 } from 'lucide-react';
 
 interface ReferralCardProps {
   code: string;
@@ -30,7 +31,7 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
     setDownloading(true);
 
     try {
-      // Pequeña pausa para asegurar renderizado
+      // 1. Generar Canvas
       await new Promise(resolve => setTimeout(resolve, 100));
 
       const canvas = await html2canvas(cardRef.current, {
@@ -38,20 +39,62 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
         scale: 2, 
         useCORS: true, 
         logging: false,
-        // Forzamos a la librería a no intentar interpretar colores complejos
         onclone: (doc) => {
           const el = doc.getElementById(`card-capture-${index}`);
           if (el) el.style.colorScheme = 'light';
         }
       });
 
-      const image = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.href = image;
-      link.download = `PASS-IT-CARD-${index + 1}.png`;
-      link.click();
+      const fileName = `pass-it-${code}.png`;
+
+      // 2. Convert Canvas to Blob
+      canvas.toBlob(async (blob) => {
+        if (!blob) {
+          setDownloading(false);
+          return;
+        }
+
+        // 3. TRY NATIVE SHARE
+        if (navigator.share && navigator.canShare) {
+          const file = new File([blob], fileName, { type: 'image/png' });
+          const shareData = {
+            files: [file],
+            title: 'PASS IT [AE]ON',
+            text: `Join me on Pass It! Code: ${code}`
+          };
+
+          if (navigator.canShare(shareData)) {
+            try {
+              await navigator.share(shareData);
+              setDownloading(false);
+              return; // Stop here if share worked
+            } catch (err) {
+              // User cancelled share or it failed. 
+              console.warn('Share failed or cancelled, attempting download fallback');
+            }
+          }
+        }
+
+        // 4. LEGACY DOWNLOAD (Desktop / Fallback)
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        setDownloading(false);
+
+      }, 'image/png');
+
+      // const image = canvas.toDataURL('image/png');
+      // const link = document.createElement('a');
+      // link.href = image;
+      // link.download = `PASS-IT-CARD-${index + 1}.png`;
+      // link.click();
+
     } catch (err) {
-      console.error("Error detallado:", err);
+      console.error("Error descargando carta:", err);
       alert("Error al generar imagen. Revisa la consola.");
     } finally {
       setDownloading(false);
