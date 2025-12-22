@@ -5,7 +5,7 @@ import { useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
 import { useLanguage } from '@/context/LanguageContext';
-import { Download, Copy, Share2 } from 'lucide-react';
+import { X } from 'lucide-react';
 
 interface ReferralCardProps {
   code: string;
@@ -16,6 +16,7 @@ interface ReferralCardProps {
 export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
+  const [fallbackImage, setFallbackImage] = useState<string | null>(null);
 
   const { language, t } = useLanguage();
 
@@ -76,13 +77,16 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
         }
 
         // 4. LEGACY DOWNLOAD (Desktop / Fallback)
+
         const link = document.createElement('a');
         link.href = canvas.toDataURL('image/png');
         link.download = fileName;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
+
+        const dataUrl = canvas.toDataURL('image/png');
+        setFallbackImage(dataUrl);
         setDownloading(false);
 
       }, 'image/png');
@@ -102,6 +106,7 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
   };
 
   return (
+    <>
     <div className="flex flex-col items-center gap-3">
       
       {/* --- ÁREA DE CAPTURA --- */}
@@ -169,5 +174,41 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
         </button>
       </div>
     </div>
+
+      {/* --- FALLBACK MODAL (For Firefox / In-App Browsers) --- */}
+      {fallbackImage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-4 max-w-sm w-full flex flex-col items-center shadow-2xl relative">
+            
+            <button 
+              onClick={() => setFallbackImage(null)}
+              className="absolute top-2 right-2 text-zinc-400 hover:text-white bg-zinc-800 rounded-full p-1"
+            >
+              <X size={20} />
+            </button>
+
+            <h3 className="text-white font-bold mb-2">{t.card_guardar}</h3>
+            <p className="text-zinc-400 text-xs mb-4 text-center">
+              {/* Detect mobile roughly or just show generic text */}
+              {t.card_preciona}
+            </p>
+
+            <img 
+              src={fallbackImage} 
+              alt="Generated Card" 
+              className="w-full h-auto rounded border border-zinc-800 shadow-lg"
+            />
+
+            <button
+               onClick={() => setFallbackImage(null)}
+               className="mt-4 w-full bg-green-600 hover:bg-green-500 text-black font-bold py-2 rounded text-sm"
+            >
+              {t.card_listo}
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+
   );
 }

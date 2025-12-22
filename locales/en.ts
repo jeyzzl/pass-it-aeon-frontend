@@ -71,6 +71,9 @@ export const en = {
     direccion: 'Address',
     escaneando_codigo: "SCANNING CODE...",
     procesando:"PROCESSING...",
+    card_guardar:"SAVE IMAGE",
+    card_preciona:"Long press the image to save it to your photos.",
+    card_listo:"DONE",
 
     // --- FAQ ---
     faq_titulo:'Frequently Asked Questions',

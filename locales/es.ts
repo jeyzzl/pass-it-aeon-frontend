@@ -71,6 +71,9 @@ export const es = {
     direccion: 'Dirección',
     escaneando_codigo: "ESCANEANDO OBJETIVO...",
     procesando:"PROCESANDO...",
+    card_guardar:"GUARDAR IMAGEN",
+    card_preciona:"Manten presionada la imagen para guardar en tus fotos",
+    card_listo:"LISTO",
 
     // --- FAQ 
     faq_titulo:'Preguntas Frecuentes',
