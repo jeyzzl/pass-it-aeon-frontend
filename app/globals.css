@@ -7,3 +7,55 @@ body {
   background: #000;
   color: #fff;
 }
+
+@media print {
+  @page {
+    size: landscape;
+    margin: 0;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    /* SAFARI FIX: Do not lock position or overflow. Let the document flow naturally. */
+    position: relative !important;
+    overflow: visible !important; 
+  }
+
+  /* COLLAPSE THE PAGE: 
+     Hiding all siblings effectively makes the body height 0px.
+     This forces the browser (and Safari) to scroll to the top automatically 
+     during print generation, solving the "Scroll Jump" issue without hacks.
+  */
+  body > *:not(#print-portal-root) {
+    display: none !important;
+  }
+
+  /* THE PORTAL CONTAINER */
+  #print-portal-root {
+    /* SAFARI FIX: Use absolute instead of fixed. Fixed is for headers. */
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    
+    /* Centering */
+    display: grid !important;
+    place-items: center !important;
+    
+    z-index: 2147483647 !important;
+    background: white !important;
+  }
+
+  /* GRAPHICS & COLORS */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}

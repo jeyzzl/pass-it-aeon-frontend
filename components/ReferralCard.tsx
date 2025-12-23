@@ -1,11 +1,12 @@
 'use client';
 // client-pass-it/components/ReferralCard.tsx
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
 import { useLanguage } from '@/context/LanguageContext';
-import { X } from 'lucide-react';
+import { X, Printer } from 'lucide-react';
 
 interface ReferralCardProps {
   code: string;
@@ -16,7 +17,10 @@ interface ReferralCardProps {
 export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
+  const [printing, setPrinting] = useState(false);
   const [fallbackImage, setFallbackImage] = useState<string | null>(null);
+  const [portalNode, setPortalNode] = useState<HTMLElement | null>(null);
+  const [imagesLoaded, setImagesLoaded] = useState({ front: false, back: false });
 
   const { language, t } = useLanguage();
 
@@ -25,18 +29,43 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
     ? '/bg-card-es.png' 
     : '/bg-card-en.png';
 
+  const backgroundImageBack = language === 'es' 
+    ? '/bg-card-back-es.png' 
+    : '/bg-card-back-en.png';
+
   const shareUrl = `${baseUrl}/claim/${code}`;
 
+  // --- PORTAL NODE ---
+  useEffect(() => {
+    // Only create the portal element if THIS specific card is printing
+    if (!printing) return;
+
+    const node = document.createElement('div');
+    node.id = 'print-portal-root'; // This ID matches your global.css
+    document.body.appendChild(node);
+    setPortalNode(node);
+
+    return () => {
+      // Cleanup: Remove the node immediately when printing stops
+      if (document.body.contains(node)) {
+        document.body.removeChild(node);
+      }
+      setPortalNode(null);
+    };
+  }, [printing]);
+
+  // --- HANDLER DESCARGA ---
   const downloadImage = async () => {
     if (!cardRef.current) return;
     setDownloading(true);
 
     try {
-      // 1. Generar Canvas
+      // 1. Time Out para generar Canvas
       await new Promise(resolve => setTimeout(resolve, 200));
 
+      // 2. Generar Canvas
       const canvas = await html2canvas(cardRef.current, {
-        backgroundColor: null, // Transparente
+        backgroundColor: null,
         scale: 2, 
         useCORS: true, 
         logging: false,
@@ -47,22 +76,12 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
       });
 
       const fileName = `pass-it-${code}.png`;
-
       const dataUrl = canvas.toDataURL('image/png');
 
-      // 2. Convert Canvas to Blob
-      // canvas.toBlob(async (blob) => {
-      //   if (!blob) {
-      //     setDownloading(false);
-      //     return;
-      //   }
-
-      // 3. TRY NATIVE SHARE
+      // 3. Intenta Share Nativo
       if (navigator.share && navigator.canShare) {
-        // Convert DataURL to Blob for sharing
         const res = await fetch(dataUrl);
         const blob = await res.blob();
-
         const file = new File([blob], fileName, { type: 'image/png' });
         const shareData = {
           files: [file],
@@ -74,15 +93,14 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
           try {
             await navigator.share(shareData);
             setDownloading(false);
-            return; // Stop here if share worked
-          } catch (err) {
-            // User cancelled share or it failed. 
+            return; 
+          } catch (err) { 
             console.warn('Share failed or cancelled, attempting download fallback');
           }
         }
       }
 
-      // 4. LEGACY DOWNLOAD (Desktop / Fallback)
+      // 4. Descarga automatica
       const link = document.createElement('a');
       link.href = dataUrl;
       link.download = fileName;
@@ -90,17 +108,9 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
       link.click();
       document.body.removeChild(link);
 
-      // const dataUrl = canvas.toDataURL('image/png');
+      // 5. Modal de descarga movil
       setFallbackImage(dataUrl);
       setDownloading(false);
-
-      // }, 'image/png');
-
-      // const image = canvas.toDataURL('image/png');
-      // const link = document.createElement('a');
-      // link.href = image;
-      // link.download = `PASS-IT-CARD-${index + 1}.png`;
-      // link.click();
 
     } catch (err) {
       console.error("Error descargando carta:", err);
@@ -110,79 +120,185 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
     }
   };
 
-  return (
-    <>
-    <div className="flex flex-col items-center gap-3">
-      
-      {/* --- ÁREA DE CAPTURA --- */}
-      <div 
-        ref={cardRef}
-        id={`card-capture-${index}`}
-        // Usamos justify-center items-center para centrar todo el bloque
-        className="relative w-[280px] h-[400px] rounded-xl overflow-hidden flex flex-col justify-center items-center shadow-2xl"
-      >
-        {/* 1. IMAGEN DE FONDO */}
-        <img 
-          src={backgroundImage}
-          alt="Card Background"
-          className="absolute inset-0 w-full h-full object-cover z-0" 
-        />
+  // --- HANDLER: PRINT ---
+  const handlePrint = () => {
+    setImagesLoaded({ front: false, back: false });
+    setPrinting(true);
+  };
 
-        {/* 2. CONTENIDO (Agrupado en el centro) */}
-        
-        {/* QR Central */}
+  useEffect(() => {
+    if (printing && imagesLoaded.front && imagesLoaded.back) {
+      const timer = setTimeout(() => {
+        window.print();
+        setTimeout(() => setPrinting(false), 500);
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [printing, imagesLoaded]);
+
+  const printContent = (
+    <div 
+      className="flex flex-row overflow-hidden bg-white"
+      style={{ 
+        transform: 'scale(0.85)', // Shrink to 90% to fit margins
+        transformOrigin: 'center center',
+        width: 'auto',
+        height: 'auto'
+      }}
+    > 
+      {/* PANEL IZQUIERDO */}
+      <div className="flex flex-col items-center justify-center border-r border-dashed border-gray-300 relative">
         <div 
-          className="relative z-10 p-1 rounded-lg shadow-lg"
-          style={{ backgroundColor: '#ffffff' }} // HEX puro para el fondo blanco del QR
+          className="relative w-[560px] h-[800px] rounded-xl overflow-hidden flex flex-col justify-center items-center shadow-none border border-gray-100"
         >
-          <QRCodeSVG 
-            value={shareUrl} 
-            size={80} 
-            level="Q" 
-            includeMargin={false}
+          {/* 1. IMAGEN DE FONDO */}
+          <img 
+            src={backgroundImage}
+            alt="Card Background"
+            className="absolute inset-0 w-full h-full object-cover z-0" 
+            onLoad={() => setImagesLoaded(prev => ({ ...prev, front: true }))}
+            onError={() => setImagesLoaded(prev => ({ ...prev, front: true }))}
+          />
+          
+          {/* 2. QR Central */}
+          <div 
+            className="relative z-10 p-1 rounded-lg shadow-lg"
+            style={{ backgroundColor: '#ffffff' }}
+          >
+            <QRCodeSVG 
+              value={shareUrl} 
+              size={160} 
+              level="Q" 
+              includeMargin={false}
+            />
+          </div>
+
+          {/* 3. Footer / Stats */}
+          <div className="relative z-10 w-full mt-3 px-4 text-center">
+            <p 
+              className="text-[14px] font-mono font-bold mb-1"
+              style={{ color: '#126929' }}
+            >
+              {t.escanea_reclamo}
+            </p>
+            <p 
+              className="text-[10px] uppercase tracking-wider"
+              style={{ color: '#e4e4e7' }}
+            >
+              {code.substring(0, 8)}...{code.substring(code.length - 4)}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* PANEL DERECHO */}
+      <div className="flex flex-col items-center justify-center relative">
+        <div 
+          className="relative w-[560px] h-[800px] rounded-xl overflow-hidden flex flex-col justify-center items-center shadow-none border border-gray-100"
+        >
+          {/* 1. Imagen de Instrucciones (back) */}
+          <img 
+            src={backgroundImageBack}
+            alt="Card Back Background"
+            className="absolute inset-0 w-full h-full object-cover z-0" 
+            onLoad={() => setImagesLoaded(prev => ({ ...prev, back: true }))}
+            onError={() => setImagesLoaded(prev => ({ ...prev, back: true }))}
           />
         </div>
+      </div>
 
-        {/* Footer / Stats (Justo debajo, transparente) */}
-        <div className="relative z-10 w-full mt-3 px-4 text-center">
-           {/* Usamos estilos inline para los colores de texto */}
-           <p 
-             className="text-[7px] font-mono font-bold mb-1"
-             style={{ color: '#126929' }} // HEX para green-400
-           >
-             {t.escanea_reclamo}
-           </p>
-           <p 
-             className="text-[5px] uppercase tracking-wider"
-             style={{ color: '#e4e4e7' }} // HEX para zinc-200 (casi blanco)
-           >
-             {code.substring(0, 8)}...{code.substring(code.length - 4)}
-           </p>
+    </div>
+  );
+
+  return (
+    <>
+      {/* ========================================================================
+            CARTA REGULAR
+          ========================================================================
+      */}
+      <div className="flex flex-col items-center gap-3 print:hidden">
+        {/* --- ÁREA DE CAPTURA --- */}
+        <div 
+          ref={cardRef}
+          id={`card-capture-${index}`}
+          className="relative w-[280px] h-[400px] rounded-xl overflow-hidden flex flex-col justify-center items-center shadow-2xl"
+        >
+          {/* 1. IMAGEN DE FONDO */}
+          <img 
+            src={backgroundImage}
+            alt="Card Background"
+            className="absolute inset-0 w-full h-full object-cover z-0" 
+          />
+
+          {/* 2. CONTENIDO */}
+          
+          {/* QR Central */}
+          <div 
+            className="relative z-10 p-1 rounded-lg shadow-lg"
+            style={{ backgroundColor: '#ffffff' }}
+          >
+            <QRCodeSVG 
+              value={shareUrl} 
+              size={80} 
+              level="Q" 
+              includeMargin={false}
+            />
+          </div>
+
+          {/* Footer / Stats */}
+          <div className="relative z-10 w-full mt-3 px-4 text-center">
+            <p 
+              className="text-[7px] font-mono font-bold mb-1"
+              style={{ color: '#126929' }}
+            >
+              {t.escanea_reclamo}
+            </p>
+            <p 
+              className="text-[5px] uppercase tracking-wider"
+              style={{ color: '#e4e4e7' }}
+            >
+              {code.substring(0, 8)}...{code.substring(code.length - 4)}
+            </p>
+          </div>
+
         </div>
 
+        {/* --- CONTROLES --- */}
+        <div className="flex gap-2 w-full max-w-[280px]">
+          {/* Boton de Copiar */}
+          <button 
+            onClick={() => { navigator.clipboard.writeText(shareUrl); alert('Link copiado'); }}
+            className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white text-xs py-3 rounded transition-colors border border-zinc-700"
+          >
+            {t.copiar}
+          </button>
+          {/* Boton Descarga */}
+          <button 
+            onClick={downloadImage}
+            disabled={downloading}
+            className="flex-1 bg-green-900/20 hover:bg-green-900/40 text-green-400 text-xs py-3 rounded transition-colors border border-green-900 flex justify-center items-center gap-1"
+          >
+            {downloading ? '...' : '⬇ '+t.descargar}
+          </button>
+          {/* Boton de Impresion */}
+          <button 
+            onClick={handlePrint}
+            className="w-10 bg-zinc-800 hover:bg-zinc-700 text-white flex items-center justify-center rounded border border-zinc-700 transition-colors"
+            title="Print Gift Card"
+          >
+            <Printer size={16} />
+          </button>
+        </div>
       </div>
 
-      {/* --- CONTROLES --- */}
-      <div className="flex gap-2 w-full max-w-[280px]">
-        <button 
-          onClick={() => { navigator.clipboard.writeText(shareUrl); alert('Link copiado'); }}
-          className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white text-xs py-3 rounded transition-colors border border-zinc-700"
-        >
-          {t.copiar}
-        </button>
-        <button 
-          onClick={downloadImage}
-          disabled={downloading}
-          className="flex-1 bg-green-900/20 hover:bg-green-900/40 text-green-400 text-xs py-3 rounded transition-colors border border-green-900 flex justify-center items-center gap-1"
-        >
-          {downloading ? '...' : '⬇ '+t.descargar}
-        </button>
-      </div>
-    </div>
-
-      {/* --- FALLBACK MODAL (For Firefox / In-App Browsers) --- */}
+      {/* 
+        ========================================================================
+          MODAL DE FALLBACK (Descarga mobil)
+        ========================================================================
+      */}
       {fallbackImage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200 print:hidden">
           <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-4 max-w-sm w-full flex flex-col items-center shadow-2xl relative">
             
             <button 
@@ -194,7 +310,6 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
 
             <h3 className="text-white font-bold mb-2">{t.card_guardar}</h3>
             <p className="text-zinc-400 text-xs mb-4 text-center">
-              {/* Detect mobile roughly or just show generic text */}
               {t.card_preciona}
             </p>
 
@@ -205,15 +320,24 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
             />
 
             <button
-               onClick={() => setFallbackImage(null)}
-               className="mt-4 w-full bg-green-600 hover:bg-green-500 text-black font-bold py-2 rounded text-sm"
+                onClick={() => setFallbackImage(null)}
+                className="mt-4 w-full bg-green-600 hover:bg-green-500 text-black font-bold py-2 rounded text-sm"
             >
               {t.card_listo}
             </button>
           </div>
         </div>
       )}
-    </>
 
+      {/* 
+        ========================================================================
+          PRINT VIEW (Gift Card)
+        ========================================================================
+      */}
+      {printing && portalNode && createPortal (
+        printContent,
+        portalNode
+      )}
+    </>
   );
 }

@@ -42,17 +42,34 @@ export default function AboutPage() {
           <div className="space-y-4 text-zinc-300 leading-relaxed md:text-lg border-l-2 border-green-900 pl-6">
             <p>{t.about_description_1}</p>
             <p className="text-white font-bold">{t.about_description_2}</p>
+            <p className="text-white italic">{t.about_description_3}</p>
           </div>
           
           {/* Botones de Redes Sociales */}
-          <div className="flex gap-4 pt-4">
+          <div className="flex flex-wrap gap-4 pt-4">
             <a 
               href="https://twitter.com/spx6900" 
               target="_blank" 
               rel="noopener noreferrer"
+              className="px-4 py-2 bg-zinc-900 border border-zinc-700 rounded hover:border-yellow-400 hover:text-yellow-400 transition-all text-xs"
+            >
+              𝕏
+            </a>
+            <a 
+              href="https://www.reddit.com/r/spx6900/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="px-4 py-2 bg-zinc-900 border border-zinc-700 rounded hover:border-orange-400 hover:text-orange-400 transition-all text-xs"
+            >
+              REDDIT
+            </a>
+            <a 
+              href="https://t.me/SPX6900Portal" 
+              target="_blank" 
+              rel="noopener noreferrer"
               className="px-4 py-2 bg-zinc-900 border border-zinc-700 rounded hover:border-blue-400 hover:text-blue-400 transition-all text-xs"
             >
-              TWITTER / X
+              TELEGRAM
             </a>
             <a 
               href="https://coinmarketcap.com/currencies/spx6900/" 
@@ -68,10 +85,14 @@ export default function AboutPage() {
         {/* SECCIÓN 2: MIRO EMBED */}
         <section className="animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
           <div className="flex items-center gap-2 mb-4">
-             <span className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
-             <h2 className="text-xl font-bold text-white tracking-tight">
-               {t.miro_board_title || "VISUAL INTELLIGENCE"}
-             </h2>
+            <span className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
+            <h2 className="text-xl font-bold text-white tracking-tight">
+              {t.miro_board_title || "VISUAL INTELLIGENCE"}
+            </h2>
+          </div>
+
+          <div className="space-y-4 mb-8 text-zinc-300 leading-relaxed md:text-lg border-l-2 border-green-900 pl-6">
+            <p>{t.miro_board_descripcion}</p>
           </div>
 
           <div className="mb-4 w-full h-[600px] md:h-[700px] bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl shadow-green-900/10 relative group">

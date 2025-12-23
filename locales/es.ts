@@ -3,10 +3,10 @@
 export const es = {
     login: "[ INICIAR SESIÓN ]",
     escanea_codigo: "[ ESANEAR CÓDIGO ]",
-    pass_it_aeon_titulo: "PASS IT AE(ON)",
+    pass_it_aeon_titulo: "PASS IT [AE]ON",
     subtitulo: "Escanea el código. Reclama la recompensa. Pásalo al siguiente.",
     ir_dashboard: "[ IR AL DASHBOARD ]",
-    titulo_dashboard: "AE(ON) DASHBOARD",
+    titulo_dashboard: "[AE]ON DASHBOARD",
     bienvenido: "Bienvenido, Aeon",
     exportar_llaves: "EXPORTAR LLAVE",
     logout: "SALIR",
@@ -57,11 +57,13 @@ export const es = {
     cargando_perfil: "CARGANDO PERFIL...",
     error_perfil: "ERROR CARGANDO PERFIL",
     error_regenerar: "Error al regenerar codigos. Limite Alcanzado.",
-    about_title: "ARCHIVO DE SPX6900: PROYECTO COGNISPHERE",
-    about_subtitle: "La realidad es lo que tú decides creer.",
-    about_description_1: "El S&P 500 es una reliquia del viejo mundo. Un techo de cristal matemático diseñado para limitarte.",
-    about_description_2: "SPX6900 no es solo un token, es un movimiento para romper la barrera de lo posible. El objetivo es simple: Flippear al S&P 500 y reescribir las reglas de las finanzas descentralizadas.",
-    miro_board_title: "MAPA TÁCTICO VISUAL",
+    about_title: "INMERSIÓN SPX6900: ENTRA A LA COGNISFERA",
+    about_subtitle: "No es solo otra moneda meme.",
+    about_description_1: "Es un movimiento cultural abordando la desigualdad económica generacional a través de la creencias colectivas y espíritu comunitario.",
+    about_description_2: "Mientras que las finanzas tradicionales fallan a las generaciones más jóvenes, SPX6900 ofrece una narrativa nueva: inversiones pacientes, con propósito, y que se resisten a la homogeneización algorítmica. Es donde las oportunidades financieras se unen con la pertenencia genuina, transformando la esperanza compartida en una realidad tangible.",
+    about_description_3:"Únete a una comunidad que está creando algo auténticamente diferente.",
+    miro_board_title: "BIENVENIDO A LA COGNISFERA",
+    miro_board_descripcion:"Cognishpere Miroverse (CogMi, para abreviar) es un centro de recursos y un espacio de aprendizaje para todo lo relacionado con SPX6900. El objetivo es ofrecer una visión de lo que se percibe al formar parte de la comunidad SPX, a la vez que se capta la profundidad y amplitud impresionantes de SPX (su misión, cultura, tradición, alcance, oportunidades y energía) sin necesidad de experimentarlo de primera mano desde dentro de la comunidad. Por supuesto, esa es la mejor manera de comprender plenamente SPX, pero lleva tiempo y puede que llegue más adelante. Dado que los principales analistas afirman que SPX6900 podría ser el activo que más rápido alcance una capitalización bursátil de 1 billón de dólares, comprender SPX6900 podría ser una de las mejores decisiones que jamás hayas tomado. Y no hay mejor lugar para aprender sobre ello que CogMi.",
     about_interactivo: "MÓDULO INTERACTIVO",
     about_navegacion: "USA EL MOUSE PARA NAVEGAR",
     about_zoom: "ZOOM ACTIVO",
@@ -77,7 +79,7 @@ export const es = {
 
     // --- FAQ 
     faq_titulo:'Preguntas Frecuentes',
-    faq_subtitulo:'Todo lo que necesitas saber sobre PASS-IT-AEON, tokens SPX6900 y cómo jugar.',
+    faq_subtitulo:'Todo lo que necesitas saber sobre PASS-IT-[AE]ON, tokens SPX6900 y cómo jugar.',
     faq_footer:"Aun tienes más preguntas?",
     // --- CATEGORIAS DE FAQ
     faq_todas:'Todas',
@@ -86,7 +88,7 @@ export const es = {
     faq_tokens:'Tokens & Recompensas',
     faq_tech:'Técnico',
     // --- PREGUNTAS
-    q1:"Qué es PASS-IT-AEON?",
+    q1:"Qué es PASS-IT-[AE]ON?",
     q2:"Cómo funciona el juego?",
     q3:"Qué es SPX6900?",
     q4:"Cómo conecto mi billetera?",
@@ -97,12 +99,12 @@ export const es = {
     q9:"Es seguro conectar mi billetera?",
     q10:"Jugar es gratis?",
     // --- RESPUESTAS
-    r1:"PASS-IT-AEON es un juego QR viral donde escaneas códigos para obtener tokens SPX6900 y luego obtienes nuevos códigos para compartir. A medida que tus invitaciones se difunden, ganas puntos y asciendes en la clasificación.",
+    r1:"PASS-IT-[AE]ON es un juego QR viral donde escaneas códigos para obtener tokens SPX6900 y luego obtienes nuevos códigos para compartir. A medida que tus invitaciones se difunden, ganas puntos y asciendes en la clasificación.",
     r2_1:"Escanea un código QR para reclamar SPX6900",
     r2_2:"Obten nuevos códigos QR para compartir",
     r2_3:"Otros escanean tus códigos y ganas puntos",
     r2_4:"Cuanta más gente invites, más alto subirás en la clasificación.",
-    r3:"SPX6900 es un token ERC-20 que existe en múltiples blockchains. En este juego, puedes reclamarlo en las redes Ethereum, Base o Solana.",
+    r3:"SPX6900 es un token puro lanzado de forma justa que existe en múltiples blockchains. En este juego, puedes reclamarlo en las redes Ethereum, Base o Solana. Es totalmente descentralizado y no se puede desestabilizar, lo que ofrece una seguridad genuina en un mundo incierto. Está atrayendo a algunas de las mentes más brillantes del mundo de las finanzas, la tecnología y otros ámbitos, unidas por una misión común: construir un movimiento financiero basado en la creencia colectiva y en una comunidad real. SPX6900 no es solo otro token más, es una nueva narrativa para aquellos que buscan alternativas.",
     r4:"Usamos Privy para conectar tu billetera. Puedes conectarte con correo electrónico, Google, X o directamente con billeteras como MetaMask, Phantom o Coinbase Wallet.",
     r5:"Puedes tener hasta 4 códigos activos a la vez. Si alguien reclama uno de tus códigos, recibirás uno nuevo automáticamente. También puedes regenerarlos desde tu panel de control.",
     r6:"Actualmente compatibles: Ethereum (ERC-20), Base (ERC-20) y Solana (través del puente Wormhole). Dependiendo la billetera conectada/generada, tú eliges en qué red recibir los tokens al reclamarlos.",
@@ -123,7 +125,7 @@ export const es = {
     faq_c3_accion:"Soporte técnico",
 
     // --- INSTRUCTIONS MODAL ---
-    inst_titulo:"Cómo jugar PASS-IT-AEON",
+    inst_titulo:"Cómo jugar PASS-IT-[AE]ON",
     inst_paso:"PASO",
     inst_de:"DE",
     inst_salir:"Regresar",
@@ -131,7 +133,7 @@ export const es = {
     inst_empezar:"Comienza!",
     inst_siguiente:"Siguiente",
     // -- CARTAS 
-    // C2
+    // C1
     inst_c1_titulo:"Escanea",
     inst_c1_subtitulo:"Utiliza tu cámara para escanear un código QR y reclamar tokens SPX6900.",
     inst_c1_detalles_a:"Encuentra ó Recibe un código QR (ó enlace de reclamación).",
@@ -144,6 +146,7 @@ export const es = {
     inst_c2_detalles_a:"Autentícate por email, redes sociales o billetera.",
     inst_c2_detalles_b:"Selecciona tu red preferida",
     inst_c2_detalles_c:"Reclama tus tokens SPX6900",
+    inst_C2_detalles_d:"CogMi: Cómo configurar una billetera",
     inst_c2_visual_1:"Autentícate",
     inst_c2_visual_2:"Selecciona red",
     inst_c2_visual_3:"Reclama tokens",
@@ -151,11 +154,11 @@ export const es = {
     inst_c3_titulo:"Comparte & Gana",
     inst_c3_subtitulo:"Consigue nuevos códigos QR para compartir con tus amigos y ganar puntos.",
     inst_c3_detalles_a:"Obten 4 códigos nuevos después de reclamar.",
-    inst_c3_detalles_b:"Descarga tus tarjetas o copia el enlace.",
+    inst_c3_detalles_b:"Descarga tus tarjetas o copia el enlace (pueden ser impresas o enviadas digitalmente).",
     inst_c3_detalles_c:"Gana 100 puntos por cada reclamación directa.",
     // C4
     inst_c4_titulo:"Sube de lugar",
-    inst_c4_subtitulo:"Observa tu puntuación aumentar y compite en la clasificación global.",
+    inst_c4_subtitulo:"Observa tu puntuación aumentar conforme tus cartas son reclamadas, y escala la clasificación global.",
     inst_c4_detalles_a:"Gana puntos por referencias directas",
     inst_c4_detalles_b:"Puntos de bonificación por referencias secundarias",
     inst_c4_detalles_c:"Ve los mayores jugadores destacados a nivel mundial",

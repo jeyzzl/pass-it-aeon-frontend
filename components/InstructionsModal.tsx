@@ -155,7 +155,7 @@ export default function InstructionsModal({ isOpen, onClose }: InstructionsModal
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs sm:text-sm ${
+                        <div className={`w-8 h-8 p-4 rounded-full flex items-center justify-center text-xs sm:text-sm ${
                           currentStep === index + 1
                             ? 'bg-green-600 text-black'
                             : index + 1 < currentStep
@@ -237,6 +237,13 @@ export default function InstructionsModal({ isOpen, onClose }: InstructionsModal
                           <div className="text-xs text-gray-400">{t.inst_c2_visual_3}</div>
                         </div>
                       </div>
+                      <a
+                        href="https://tinyurl.com/CogMi-HowToBuy" 
+                        target="_blank" 
+                        className='flex justify-center px-4 py-2 bg-zinc-900 border border-zinc-700 rounded hover:border-yellow-400 hover:text-yellow-400 transition-all text-xs mt-8'
+                      >
+                        {t.inst_C2_detalles_d}
+                      </a>
                     </div>
                   )}
                 </motion.div>
