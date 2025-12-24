@@ -138,77 +138,99 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
   }, [printing, imagesLoaded]);
 
   const printContent = (
-    <div 
-      className="flex flex-row overflow-hidden bg-white"
-      style={{ 
-        transform: 'scale(0.85)', // Shrink to 90% to fit margins
-        transformOrigin: 'center center',
-        width: 'auto',
-        height: 'auto'
-      }}
-    > 
-      {/* PANEL IZQUIERDO */}
-      <div className="flex flex-col items-center justify-center border-r border-dashed border-gray-300 relative">
-        <div 
-          className="relative w-[560px] h-[800px] rounded-xl overflow-hidden flex flex-col justify-center items-center shadow-none border border-gray-100"
-        >
-          {/* 1. IMAGEN DE FONDO */}
-          <img 
-            src={backgroundImage}
-            alt="Card Background"
-            className="absolute inset-0 w-full h-full object-cover z-0" 
-            onLoad={() => setImagesLoaded(prev => ({ ...prev, front: true }))}
-            onError={() => setImagesLoaded(prev => ({ ...prev, front: true }))}
-          />
-          
-          {/* 2. QR Central */}
+    <>
+    {/* DYNAMIC STYLES FOR MOBILE ROTATION 
+         If the user prints in Portrait, we rotate the content 90deg to fit.
+         If Landscape, we scale normally.
+    */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @media print {
+          .print-wrapper {
+             /* Default Landscape Scaling */
+             transform: scale(0.85);
+          }
+        }
+        @media print and (orientation: portrait) {
+          .print-wrapper {
+             /* If Portrait: Rotate 90deg and Scale smaller to fit width */
+             transform: rotate(-90deg) scale(0.55);
+          }
+        }
+      `}} 
+      />
+      <div 
+        className="flex flex-row overflow-hidden bg-white"
+        style={{ 
+          transform: 'scale(0.85)', // Shrink to 90% to fit margins
+          transformOrigin: 'center center',
+          minWidth: '1120px',
+          width: '1120px',
+          height: '800px'
+        }}
+      > 
+        {/* PANEL IZQUIERDO */}
+        <div className="flex flex-col items-center justify-center border-r border-dashed border-gray-300 relative">
           <div 
-            className="relative z-10 p-1 rounded-lg shadow-lg"
-            style={{ backgroundColor: '#ffffff' }}
+            className="relative w-[560px] h-[800px] rounded-xl overflow-hidden flex flex-col justify-center items-center shadow-none border border-gray-100"
           >
-            <QRCodeSVG 
-              value={shareUrl} 
-              size={160} 
-              level="Q" 
-              includeMargin={false}
+            {/* 1. IMAGEN DE FONDO */}
+            <img 
+              src={backgroundImage}
+              alt="Card Background"
+              className="absolute inset-0 w-full h-full object-cover z-0" 
+              onLoad={() => setImagesLoaded(prev => ({ ...prev, front: true }))}
+              onError={() => setImagesLoaded(prev => ({ ...prev, front: true }))}
+            />
+            
+            {/* 2. QR Central */}
+            <div 
+              className="relative z-10 p-1 rounded-lg shadow-lg"
+              style={{ backgroundColor: '#ffffff' }}
+            >
+              <QRCodeSVG 
+                value={shareUrl} 
+                size={160} 
+                level="Q" 
+                includeMargin={false}
+              />
+            </div>
+
+            {/* 3. Footer / Stats */}
+            <div className="relative z-10 w-full mt-3 px-4 text-center">
+              <p 
+                className="text-[14px] font-mono font-bold mb-1"
+                style={{ color: '#126929' }}
+              >
+                {t.escanea_reclamo}
+              </p>
+              <p 
+                className="text-[10px] uppercase tracking-wider"
+                style={{ color: '#e4e4e7' }}
+              >
+                {code.substring(0, 8)}...{code.substring(code.length - 4)}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* PANEL DERECHO */}
+        <div className="flex flex-col items-center justify-center relative">
+          <div 
+            className="relative w-[560px] h-[800px] rounded-xl overflow-hidden flex flex-col justify-center items-center shadow-none border border-gray-100"
+          >
+            {/* 1. Imagen de Instrucciones (back) */}
+            <img 
+              src={backgroundImageBack}
+              alt="Card Back Background"
+              className="absolute inset-0 w-full h-full object-cover z-0" 
+              onLoad={() => setImagesLoaded(prev => ({ ...prev, back: true }))}
+              onError={() => setImagesLoaded(prev => ({ ...prev, back: true }))}
             />
           </div>
-
-          {/* 3. Footer / Stats */}
-          <div className="relative z-10 w-full mt-3 px-4 text-center">
-            <p 
-              className="text-[14px] font-mono font-bold mb-1"
-              style={{ color: '#126929' }}
-            >
-              {t.escanea_reclamo}
-            </p>
-            <p 
-              className="text-[10px] uppercase tracking-wider"
-              style={{ color: '#e4e4e7' }}
-            >
-              {code.substring(0, 8)}...{code.substring(code.length - 4)}
-            </p>
-          </div>
         </div>
-      </div>
 
-      {/* PANEL DERECHO */}
-      <div className="flex flex-col items-center justify-center relative">
-        <div 
-          className="relative w-[560px] h-[800px] rounded-xl overflow-hidden flex flex-col justify-center items-center shadow-none border border-gray-100"
-        >
-          {/* 1. Imagen de Instrucciones (back) */}
-          <img 
-            src={backgroundImageBack}
-            alt="Card Back Background"
-            className="absolute inset-0 w-full h-full object-cover z-0" 
-            onLoad={() => setImagesLoaded(prev => ({ ...prev, back: true }))}
-            onError={() => setImagesLoaded(prev => ({ ...prev, back: true }))}
-          />
-        </div>
       </div>
-
-    </div>
+    </>
   );
 
   return (

@@ -20,8 +20,7 @@ body {
     margin: 0 !important;
     padding: 0 !important;
     background: white !important;
-    /* SAFARI FIX: Do not lock position or overflow. Let the document flow naturally. */
-    position: relative !important;
+    /* position: relative !important; */
     overflow: visible !important; 
   }
 
@@ -36,18 +35,18 @@ body {
 
   /* THE PORTAL CONTAINER */
   #print-portal-root {
-    /* SAFARI FIX: Use absolute instead of fixed. Fixed is for headers. */
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    height: 100% !important;
+    min-height: 100% !important;
     
     /* Centering */
-    display: grid !important;
-    place-items: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     
-    z-index: 2147483647 !important;
+    z-index: 9999 !important;
     background: white !important;
   }
 
