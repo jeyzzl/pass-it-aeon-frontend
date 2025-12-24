@@ -56,6 +56,21 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
 
     const node = document.createElement('div');
     node.id = 'print-portal-root';
+
+    Object.assign(node.style, {
+      position: 'fixed',
+      top: '0',
+      left: '0',
+      width: '100vw',
+      height: '100vh',
+      zIndex: '999999',
+      backgroundColor: '#ffffff',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden'
+    });
+
     document.body.appendChild(node);
     setPortalNode(node);
 
@@ -155,30 +170,28 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
             if (!elementToCapture) throw new Error("Portal empty");
 
             // 1. Capture the High-Res Canvas
-            // Note: We capture it "raw" (no scale(0.85)) because we control PDF size
             const canvas = await html2canvas(elementToCapture, {
-              scale: 2, // High res for print quality
+              scale: 1.5,
               useCORS: true,
               logging: false,
               backgroundColor: '#ffffff',
             });
 
             // 2. Create PDF (A4 Landscape)
-            const pdf = new jsPDF('l', 'mm', 'a4'); // l = landscape, mm = millimeters
-            const pageWidth = 297;  // A4 Width
-            const pageHeight = 210; // A4 Height
+            const pdf = new jsPDF('l', 'mm', 'a4');
+            const pageWidth = 297;
+            const pageHeight = 210;
 
             // 3. Add Image to PDF
-            // We stretch it to fit the A4 page perfectly
-            const imgData = canvas.toDataURL('image/png');
-            pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
+            const imgData = canvas.toDataURL('image/jpeg', 0.9);
+            pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
 
             // 4. Save
             pdf.save(`pass-it-gift-${code}.pdf`);
 
           } catch (error) {
             console.error("PDF Gen Error:", error);
-            alert("Error generating PDF. Please try again.");
+            alert("Download blocked by browser. Please try opening in Chrome/Safari.");
           } finally {
             setProcessingPdf(false);
             setPrinting(false); // Close portal
@@ -187,7 +200,6 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
         } else {
           // === DESKTOP: NATIVE PRINT ===
           window.print();
-          // Close after print dialog interaction
           setTimeout(() => setPrinting(false), 500);
         }
       };
