@@ -37,16 +37,14 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
 
   // --- PORTAL NODE ---
   useEffect(() => {
-    // Only create the portal element if THIS specific card is printing
     if (!printing) return;
 
     const node = document.createElement('div');
-    node.id = 'print-portal-root'; // This ID matches your global.css
+    node.id = 'print-portal-root';
     document.body.appendChild(node);
     setPortalNode(node);
 
     return () => {
-      // Cleanup: Remove the node immediately when printing stops
       if (document.body.contains(node)) {
         document.body.removeChild(node);
       }
@@ -120,7 +118,7 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
     }
   };
 
-  // --- HANDLER: PRINT ---
+  // --- HANDLER IMPRESION ---
   const handlePrint = () => {
     setImagesLoaded({ front: false, back: false });
     setPrinting(true);
@@ -137,12 +135,14 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
     }
   }, [printing, imagesLoaded]);
 
+  /*
+    ========================================================================
+      CONTENIDO DE IMPRESION
+    ========================================================================
+  */
   const printContent = (
     <>
-    {/* DYNAMIC STYLES FOR MOBILE ROTATION 
-         If the user prints in Portrait, we rotate the content 90deg to fit.
-         If Landscape, we scale normally.
-    */}
+      {/* DYNAMIC STYLES FOR MOBILE ROTATION */}
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
           .print-wrapper {
@@ -159,17 +159,17 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
       `}} 
       />
       <div 
-        className="flex flex-row overflow-hidden bg-white"
+        className="print-wrapper flex flex-row overflow-hidden bg-white"
         style={{ 
-          transform: 'scale(0.85)', // Shrink to 90% to fit margins
+          // transform: 'scale(0.85)',
           transformOrigin: 'center center',
           minWidth: '1120px',
           width: '1120px',
           height: '800px'
         }}
-      > 
+      >
         {/* PANEL IZQUIERDO */}
-        <div className="flex flex-col items-center justify-center border-r border-dashed border-gray-300 relative shrink-0">
+        <div className="w-1/2 h-full flex flex-col items-center justify-center border-r border-dashed border-gray-300 relative shrink-0">
           <div 
             className="relative w-[560px] h-[800px] rounded-xl overflow-hidden flex flex-col justify-center items-center shadow-none border border-gray-100"
           >
@@ -215,7 +215,7 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
         </div>
 
         {/* PANEL DERECHO */}
-        <div className="flex flex-col items-center justify-center relative shrink-0">
+        <div className="w-1/2 h-full flex flex-col items-center justify-center relative shrink-0">
           <div 
             className="relative w-[560px] h-[800px] rounded-xl overflow-hidden flex flex-col justify-center items-center shadow-none border border-gray-100"
           >
@@ -236,9 +236,10 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
 
   return (
     <>
-      {/* ========================================================================
-            CARTA REGULAR
-          ========================================================================
+      {/* 
+        ========================================================================
+          CARTA REGULAR
+        ========================================================================
       */}
       <div className="flex flex-col items-center gap-3 print:hidden">
         {/* --- ÁREA DE CAPTURA --- */}
@@ -315,7 +316,7 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
         </div>
       </div>
 
-      {/* 
+      {/*
         ========================================================================
           MODAL DE FALLBACK (Descarga mobil)
         ========================================================================
@@ -352,7 +353,7 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
         </div>
       )}
 
-      {/* 
+      {/*
         ========================================================================
           PRINT VIEW (Gift Card)
         ========================================================================
