@@ -169,7 +169,7 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
         }}
       > 
         {/* PANEL IZQUIERDO */}
-        <div className="flex flex-col items-center justify-center border-r border-dashed border-gray-300 relative">
+        <div className="flex flex-col items-center justify-center border-r border-dashed border-gray-300 relative shrink-0">
           <div 
             className="relative w-[560px] h-[800px] rounded-xl overflow-hidden flex flex-col justify-center items-center shadow-none border border-gray-100"
           >
@@ -178,6 +178,7 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
               src={backgroundImage}
               alt="Card Background"
               className="absolute inset-0 w-full h-full object-cover z-0" 
+              loading='eager'
               onLoad={() => setImagesLoaded(prev => ({ ...prev, front: true }))}
               onError={() => setImagesLoaded(prev => ({ ...prev, front: true }))}
             />
@@ -214,7 +215,7 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
         </div>
 
         {/* PANEL DERECHO */}
-        <div className="flex flex-col items-center justify-center relative">
+        <div className="flex flex-col items-center justify-center relative shrink-0">
           <div 
             className="relative w-[560px] h-[800px] rounded-xl overflow-hidden flex flex-col justify-center items-center shadow-none border border-gray-100"
           >
