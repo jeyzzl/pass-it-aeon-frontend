@@ -5,8 +5,9 @@ import { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 import { useLanguage } from '@/context/LanguageContext';
-import { X, Printer } from 'lucide-react';
+import { X, Printer, FileDown } from 'lucide-react';
 
 interface ReferralCardProps {
   code: string;
@@ -16,11 +17,15 @@ interface ReferralCardProps {
 
 export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+
+  // Estados
   const [downloading, setDownloading] = useState(false);
   const [printing, setPrinting] = useState(false);
+  const [processingPdf, setProcessingPdf] = useState(false);
   const [fallbackImage, setFallbackImage] = useState<string | null>(null);
   const [portalNode, setPortalNode] = useState<HTMLElement | null>(null);
   const [imagesLoaded, setImagesLoaded] = useState({ front: false, back: false });
+  const [isMobile, setIsMobile] = useState(false);
 
   const { language, t } = useLanguage();
 
@@ -34,6 +39,16 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
     : '/bg-card-back-en.png';
 
   const shareUrl = `${baseUrl}/claim/${code}`;
+
+  // --- DETECTAR SI ES MOBIL ---
+  useEffect(() => {
+    const checkMobile = () => {
+      const userAgent = typeof navigator === 'undefined' ? '' : navigator.userAgent;
+      const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+      setIsMobile(mobile);
+    };
+    checkMobile();
+  }, []);
 
   // --- PORTAL NODE ---
   useEffect(() => {
@@ -52,7 +67,7 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
     };
   }, [printing]);
 
-  // --- HANDLER DESCARGA ---
+  // --- HANDLER DESCARGA IMAGEN ---
   const downloadImage = async () => {
     if (!cardRef.current) return;
     setDownloading(true);
@@ -118,22 +133,68 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
     }
   };
 
-  // --- HANDLER IMPRESION ---
+  // --- HANDLER IMPRESION O PDF ---
   const handlePrint = () => {
     setImagesLoaded({ front: false, back: false });
     setPrinting(true);
+    if (isMobile) setProcessingPdf(true);
   };
 
   useEffect(() => {
     if (printing && imagesLoaded.front && imagesLoaded.back) {
-      const timer = setTimeout(() => {
-        window.print();
-        setTimeout(() => setPrinting(false), 500);
-      }, 500);
 
-      return () => clearTimeout(timer);
+      const execute = async () => {
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        if (!portalNode) return;
+
+        if (isMobile) {
+          // === MOBILE: GENERATE PDF ===
+          try {
+            const elementToCapture = portalNode.firstElementChild as HTMLElement;
+            if (!elementToCapture) throw new Error("Portal empty");
+
+            // 1. Capture the High-Res Canvas
+            // Note: We capture it "raw" (no scale(0.85)) because we control PDF size
+            const canvas = await html2canvas(elementToCapture, {
+              scale: 2, // High res for print quality
+              useCORS: true,
+              logging: false,
+              backgroundColor: '#ffffff',
+            });
+
+            // 2. Create PDF (A4 Landscape)
+            const pdf = new jsPDF('l', 'mm', 'a4'); // l = landscape, mm = millimeters
+            const pageWidth = 297;  // A4 Width
+            const pageHeight = 210; // A4 Height
+
+            // 3. Add Image to PDF
+            // We stretch it to fit the A4 page perfectly
+            const imgData = canvas.toDataURL('image/png');
+            pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
+
+            // 4. Save
+            pdf.save(`pass-it-gift-${code}.pdf`);
+
+          } catch (error) {
+            console.error("PDF Gen Error:", error);
+            alert("Error generating PDF. Please try again.");
+          } finally {
+            setProcessingPdf(false);
+            setPrinting(false); // Close portal
+          }
+
+        } else {
+          // === DESKTOP: NATIVE PRINT ===
+          window.print();
+          // Close after print dialog interaction
+          setTimeout(() => setPrinting(false), 500);
+        }
+      };
+
+      execute();
     }
-  }, [printing, imagesLoaded]);
+  }, [printing, portalNode, imagesLoaded, isMobile, code ]);
 
   /*
     ========================================================================
@@ -141,97 +202,79 @@ export default function ReferralCard({ code, index, baseUrl }: ReferralCardProps
     ========================================================================
   */
   const printContent = (
-    <>
-      {/* DYNAMIC STYLES FOR MOBILE ROTATION */}
-      <style dangerouslySetInnerHTML={{__html: `
-        @media print {
-          .print-wrapper {
-             /* Default Landscape Scaling */
-             transform: scale(0.85);
-          }
-        }
-        @media print and (orientation: portrait) {
-          .print-wrapper {
-             /* If Portrait: Rotate 90deg and Scale smaller to fit width */
-             transform: rotate(-90deg) scale(0.55);
-          }
-        }
-      `}} 
-      />
-      <div 
-        className="print-wrapper flex flex-row overflow-hidden bg-white"
-        style={{ 
-          // transform: 'scale(0.85)',
-          transformOrigin: 'center center',
-          minWidth: '1120px',
-          width: '1120px',
-          height: '800px'
-        }}
-      >
-        {/* PANEL IZQUIERDO */}
-        <div className="w-1/2 h-full flex flex-col items-center justify-center border-r border-dashed border-gray-300 relative shrink-0">
+    <div 
+      className="flex flex-row overflow-hidden bg-white"
+      style={{ 
+        transform: isMobile ? 'none' : 'scale(0.85)',
+        transformOrigin: 'center center',
+        minWidth: '1120px',
+        width: '1120px',
+        height: '800px'
+      }}
+    >
+      {/* PANEL IZQUIERDO */}
+      <div className="flex flex-col items-center justify-center border-r border-dashed border-gray-300 relative shrink-0">
+        <div 
+          className="relative w-[560px] h-[800px] rounded-xl overflow-hidden flex flex-col justify-center items-center shadow-none border border-gray-100"
+        >
+          {/* 1. IMAGEN DE FONDO */}
+          <img 
+            src={backgroundImage}
+            alt="Card Background"
+            className="absolute inset-0 w-full h-full object-cover z-0" 
+            loading='eager'
+            onLoad={() => setImagesLoaded(prev => ({ ...prev, front: true }))}
+            onError={() => setImagesLoaded(prev => ({ ...prev, front: true }))}
+          />
+          
+          {/* 2. QR Central */}
           <div 
-            className="relative w-[560px] h-[800px] rounded-xl overflow-hidden flex flex-col justify-center items-center shadow-none border border-gray-100"
+            className="relative z-10 p-1 rounded-lg shadow-lg"
+            style={{ backgroundColor: '#ffffff' }}
           >
-            {/* 1. IMAGEN DE FONDO */}
-            <img 
-              src={backgroundImage}
-              alt="Card Background"
-              className="absolute inset-0 w-full h-full object-cover z-0" 
-              loading='eager'
-              onLoad={() => setImagesLoaded(prev => ({ ...prev, front: true }))}
-              onError={() => setImagesLoaded(prev => ({ ...prev, front: true }))}
+            <QRCodeSVG 
+              value={shareUrl} 
+              size={160} 
+              level="Q" 
+              includeMargin={false}
             />
-            
-            {/* 2. QR Central */}
-            <div 
-              className="relative z-10 p-1 rounded-lg shadow-lg"
-              style={{ backgroundColor: '#ffffff' }}
+          </div>
+
+          {/* 3. Footer / Stats */}
+          <div className="relative z-10 w-full mt-3 px-4 text-center">
+            <p 
+              className="text-[14px] font-mono font-bold mb-1"
+              style={{ color: '#126929' }}
             >
-              <QRCodeSVG 
-                value={shareUrl} 
-                size={160} 
-                level="Q" 
-                includeMargin={false}
-              />
-            </div>
-
-            {/* 3. Footer / Stats */}
-            <div className="relative z-10 w-full mt-3 px-4 text-center">
-              <p 
-                className="text-[14px] font-mono font-bold mb-1"
-                style={{ color: '#126929' }}
-              >
-                {t.escanea_reclamo}
-              </p>
-              <p 
-                className="text-[10px] uppercase tracking-wider"
-                style={{ color: '#e4e4e7' }}
-              >
-                {code.substring(0, 8)}...{code.substring(code.length - 4)}
-              </p>
-            </div>
+              {t.escanea_reclamo}
+            </p>
+            <p 
+              className="text-[10px] uppercase tracking-wider"
+              style={{ color: '#e4e4e7' }}
+            >
+              {code.substring(0, 8)}...{code.substring(code.length - 4)}
+            </p>
           </div>
         </div>
-
-        {/* PANEL DERECHO */}
-        <div className="w-1/2 h-full flex flex-col items-center justify-center relative shrink-0">
-          <div 
-            className="relative w-[560px] h-[800px] rounded-xl overflow-hidden flex flex-col justify-center items-center shadow-none border border-gray-100"
-          >
-            {/* 1. Imagen de Instrucciones (back) */}
-            <img 
-              src={backgroundImageBack}
-              alt="Card Back Background"
-              className="absolute inset-0 w-full h-full object-cover z-0" 
-              onLoad={() => setImagesLoaded(prev => ({ ...prev, back: true }))}
-              onError={() => setImagesLoaded(prev => ({ ...prev, back: true }))}
-            />
-          </div>
-        </div>
-
       </div>
-    </>
+
+      {/* PANEL DERECHO */}
+      <div className="flex flex-col items-center justify-center relative shrink-0">
+        <div 
+          className="relative w-[560px] h-[800px] rounded-xl overflow-hidden flex flex-col justify-center items-center shadow-none border border-gray-100"
+        >
+          {/* 1. Imagen de Instrucciones (back) */}
+          <img 
+            src={backgroundImageBack}
+            alt="Card Back Background"
+            className="absolute inset-0 w-full h-full object-cover z-0" 
+            onLoad={() => setImagesLoaded(prev => ({ ...prev, back: true }))}
+            onError={() => setImagesLoaded(prev => ({ ...prev, back: true }))}
+          />
+        </div>
+      </div>
+
+    </div>
   );
 
   return (
