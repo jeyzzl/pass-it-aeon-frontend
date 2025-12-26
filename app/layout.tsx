@@ -14,16 +14,16 @@ export const metadata: Metadata = {
   
   // Metadatos para Facebook / Discord / WhatsApp
   openGraph: {
-    title: 'INVITACIÓN CONFIDENCIAL: Pass It Ae[on]',
-    description: 'Alguien te ha pasado la cadena. Reclama tus tokens SPX antes de que expiren.',
+    title: 'PASS IT [AE]ON',
+    description: 'Reclama tus tokens SPX antes de que expiren.',
     url: 'https://passitaeon.com',
-    siteName: 'Pass It Ae[on]',
+    siteName: 'Pass It [Ae]on',
     images: [
       {
         url: 'https://passitaeon.com/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Pass It Aeon - Enter the Cognisphere',
+        alt: 'PASS IT [AE]ON - Enter the Cognisphere',
       },
     ],
     locale: 'es_MX',
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   // Metadatos para Twitter / X
   twitter: {
     card: 'summary_large_image',
-    title: 'Pass It Ae[on] | Claim SPX6900',
+    title: 'PASS IT [AE]ON | Claim SPX6900',
     description: 'No rompas la cadena. Únete ahora.',
     images: ['https://passitaeon.com/og-image.jpg'], // La misma imagen
   },
