@@ -9,15 +9,15 @@ import ClientLayoutWrapper from './ClientLayoutWrapper';
 
 // --- CONFIGURACIÓN SEO Y REDES SOCIALES (VIRAL LOOP) ---
 export const metadata: Metadata = {
-  title: 'Pass It Ae[on] | Scan-Claim-Continue',
-  description: 'Únete a la resistencia. Reclama tokens SPX gratis y expande la red. Solo por invitación. ¿Romperás la cadena?',
+  title: 'PASS IT [AE]ON | Scan-Claim-Share',
+  description: 'Join the movement. Claim SPX tokens and expand the network. Invitation only. Will you break the chain?',
   
   // Metadatos para Facebook / Discord / WhatsApp
   openGraph: {
     title: 'PASS IT [AE]ON',
-    description: 'Reclama tus tokens SPX antes de que expiren.',
+    description: 'Claim SPX before they expire.',
     url: 'https://passitaeon.com',
-    siteName: 'Pass It [Ae]on',
+    siteName: 'PASS IT [AE]ON',
     images: [
       {
         url: 'https://passitaeon.com/og-image.jpg',
@@ -33,8 +33,8 @@ export const metadata: Metadata = {
   // Metadatos para Twitter / X
   twitter: {
     card: 'summary_large_image',
-    title: 'PASS IT [AE]ON | Claim SPX6900',
-    description: 'No rompas la cadena. Únete ahora.',
+    title: 'PASS IT [AE]ON - Claim SPX6900',
+    description: 'Claim Now. Join the Movement',
     images: ['https://passitaeon.com/og-image.jpg'], // La misma imagen
   },
   
