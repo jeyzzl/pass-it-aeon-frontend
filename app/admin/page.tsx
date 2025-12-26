@@ -33,6 +33,11 @@ export default function AdminPage() {
   const [dbPerformance, setDbPerformance] = useState<any>(null);
   const [dbPerformanceLoading, setDbPerformanceLoading] = useState(false);
 
+  // --- ESTADO DE ASIGNACION DE PERMISOS
+  const [targetWallet, setTargetWallet] = useState('');
+  const [targetRole, setTargetRole] = useState('ambassador');
+  const [roleLoading, setRoleLoading] = useState(false);
+
   // Cargar info de funcionamiento DB 
   const loadDBPerformance = async () => {
     setDbPerformanceLoading(true);
@@ -148,6 +153,24 @@ export default function AdminPage() {
     }
   }
 
+  async function handleSetRole() {
+    if (!targetWallet) return alert('Enter a wallet address');
+    setRoleLoading(true);
+    try {
+      await axios.post(`/api/admin/set-role`, {
+        secret: password, // Uses the logged-in password
+        targetWallet,
+        newRole: targetRole
+      });
+      alert(`✅ Role updated to ${targetRole}`);
+      setTargetWallet('');
+    } catch (error: any) {
+      alert(`❌ Error: ${error.response?.data?.error || error.message}`);
+    } finally {
+      setRoleLoading(false);
+    }
+  }
+
   const loadMonitoringData = async () => {
     setMonitoringLoading(true);
     try {
@@ -241,7 +264,7 @@ export default function AdminPage() {
         <div className="bg-zinc-900/20 border border-yellow-900/50 p-6 rounded-xl h-fit">
           <h2 className="text-xl text-yellow-500 mb-6 font-bold flex items-center gap-2">
             <span className="text-2xl">⚡</span>
-            GOD MODE: GENESIS CODES
+            GENESIS CODES
           </h2>
 
           <div className="space-y-6">
@@ -302,6 +325,56 @@ export default function AdminPage() {
                 </pre>
               </div>
             )}
+          </div>
+          
+          {/* CARD: USER MANAGEMENT */}
+          <h2 className="text-xl text-blue-500 mb-6 mt-10 font-bold flex items-center gap-2">
+            <span className="text-2xl">👮‍♂️</span>
+            USER ROLES
+          </h2>
+
+          <div className="bg-black p-4 rounded border border-zinc-800 space-y-4">
+            <p className="text-zinc-400 text-xs leading-relaxed">
+              Promote users to <strong>Ambassadors</strong>. They can generate custom-amount gift cards (up to 25% of faucet balance).
+            </p>
+
+            <div>
+              <label className="text-xs text-zinc-600 block mb-1">USER WALLET ADDRESS</label>
+              <input 
+                type="text" 
+                value={targetWallet}
+                onChange={(e) => setTargetWallet(e.target.value)}
+                placeholder="0x..."
+                className="w-full bg-zinc-900 border border-zinc-700 p-2 text-white outline-none focus:border-blue-500 font-mono text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs text-zinc-600 block mb-1">SELECT ROLE</label>
+              <div className="flex gap-2">
+                {['user', 'ambassador', 'admin'].map(r => (
+                  <button
+                    key={r}
+                    onClick={() => setTargetRole(r)}
+                    className={`flex-1 py-2 text-xs font-bold border ${
+                      targetRole === r 
+                        ? 'bg-blue-900/40 border-blue-500 text-blue-400' 
+                        : 'bg-zinc-900 border-zinc-700 text-zinc-500 hover:border-zinc-500'
+                    }`}
+                  >
+                    {r.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button 
+              onClick={handleSetRole}
+              disabled={roleLoading}
+              className="w-full bg-blue-900/20 hover:bg-blue-900/40 text-blue-500 border border-blue-900 py-3 font-bold transition-all disabled:opacity-50"
+            >
+              {roleLoading ? 'UPDATING...' : 'SET ROLE'}
+            </button>
           </div>
         </div>
       </div>

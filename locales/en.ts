@@ -163,4 +163,27 @@ export const en = {
     inst_c4_detalles_b:"Bonus points for grandchild referrals",
     inst_c4_detalles_c:"Top players featured globally",
 
+    // --- AMBASSADOR DASHBOARD ---
+    enter_valid_number:"Please enter a valid number",
+    fallo_generar:"Failed to generate code",
+    inicializando:"Initializing...",
+
+    // --- VISTA
+    ambassador_titulo:"Ambassador Portal",
+    ambassador_subtitulo:"Restricted access for community leaders.",
+    ambassador_tu_billetera:"Your wallet",
+    ambassador_no_registrada:"is not registered as an Ambassador.",
+    ambassador_consola:"AMBASSADOR CONSOLE",
+    ambassador_total:"TOTAL LIQUIDITY",
+    ambassador_generar:"Generate Custom Card",
+    ambassador_inst_1:"Create a unique, one-time claim link with a custom SPX amount.",
+    ambassador_inst_2:"Use this for giveaways, VIP onboarding, or contests.",
+    ambassador_cantidad:"Amount to Gift",
+    ambassador_dias:"Valid Days",
+    ambassador_limite:"Max Limit",
+    ambassador_generando:"GENERATING...",
+    ambassador_crear_regalo:"CREATE GIFT LINK",
+    ambassador_regalo_listo:"GIFT READY",
+    ambassador_no_codigo:"NO CODE GENERATED",
+    ambassador_rellena_form:"Fill the form to create a card",
 };

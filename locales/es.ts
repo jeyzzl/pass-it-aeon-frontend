@@ -162,4 +162,28 @@ export const es = {
     inst_c4_detalles_a:"Gana puntos por referencias directas",
     inst_c4_detalles_b:"Puntos de bonificación por referencias secundarias",
     inst_c4_detalles_c:"Ve los mayores jugadores destacados a nivel mundial",
+
+    // --- AMBASSADOR DASHBOARD ---
+    enter_valid_number:"Ingresa un numero valido",
+    fallo_generar:"Fallo al generar código",
+    inicializando:"Inicializando...",
+
+    // --- VISTA
+    ambassador_titulo:"Portal Emisarix",
+    ambassador_subtitulo:"Acceso restringido para emisarixs.",
+    ambassador_tu_billetera:"Tu billetera",
+    ambassador_no_registrada:"no esta registrada como Emisarix",
+    ambassador_consola:"CONSOLA DE EMISARIX",
+    ambassador_total:"LIQUIDEZ TOTAL",
+    ambassador_generar:"Generar Carta Especial",
+    ambassador_inst_1:"Crea un codigo, de uso unico con una cantidad especial de SPX.",
+    ambassador_inst_2:"Úsala para sorteos, integración VIP, o concursos.",
+    ambassador_cantidad:"Cantidad para regalar",
+    ambassador_dias:"Valido por",
+    ambassador_limite:"Limite Max.",
+    ambassador_generando:"GENERANDO...",
+    ambassador_crear_regalo:"CREAR REGALO",
+    ambassador_regalo_listo:"CARTA LISTA",
+    ambassador_no_codigo:"SIN CÓDIGOS GENERADOS",
+    ambassador_rellena_form:"Llena el formulario para crear la carta.",
 };

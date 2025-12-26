@@ -115,6 +115,14 @@ export default function DashboardPage() {
           
           {/* GRUPO DE BOTONES DE ACCIÓN */}
           <div className="flex gap-3">
+            {profileData?.role === 'ambassador' && (
+              <Link 
+                href="/ambassador"
+                className="bg-zinc-900 border border-zinc-700 text-zinc-300 px-4 py-2 rounded hover:border-orange-500 hover:text-orange-500 transition-all text-xs flex items-center gap-2"
+              >
+                🛡️ {t.ambassador_consola}
+              </Link>
+            )}
             {/* Botón Exportar */}
             <button 
               onClick={exportWallet}
