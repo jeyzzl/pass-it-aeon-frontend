@@ -27,7 +27,17 @@ export default function FAQPage() {
     {
       category: 'game',
       question: t.q2,
-      answer: <>1. {t.r2_1}<br />2. {t.r2_2}<br />3. {t.r2_3}<br />4. {t.r2_4}</>
+      answer: <>0. {t.r2_1}<br/>
+                1. {t.r2_2}<br/>
+                2. {t.r2_3}<br />
+                3. {t.r2_4}<br />
+                4. {t.r2_5}<br />
+                5. {t.r2_6}<br />
+                6. {t.r2_7}<br />
+                7. {t.r2_8}<br />
+                8. {t.r2_9}<br />
+                9. {t.r2_10}
+              </>
     },
     {
       category: 'tokens',
