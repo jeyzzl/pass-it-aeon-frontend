@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import axios from 'axios';
 import ReferralCard from '@/components/ReferralCard';
+import DonateCard from '@/components/DonateCard';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import { getActiveWalletAddress } from '@/lib/walletUtils';
@@ -166,7 +167,7 @@ export default function DashboardPage() {
                     </div>
                 </div>
 
-                <div className="bg-black border border-zinc-800 p-6 rounded-xl">
+                <div className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-xl">
                     <h3 className="text-zinc-400 font-bold mb-4 flex items-center gap-2">
                         <span className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
                         TOP AEONS
@@ -184,6 +185,11 @@ export default function DashboardPage() {
                         </div>
                         ))}
                     </div>
+                </div>
+
+                <div className="space-y-6">
+                  {/* The Donate Widget */}
+                  <DonateCard className="shadow-xl shadow-amber-900/5" /> 
                 </div>
             </div>
 

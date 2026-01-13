@@ -186,4 +186,9 @@ export const es = {
     ambassador_regalo_listo:"CARTA LISTA",
     ambassador_no_codigo:"SIN CÓDIGOS GENERADOS",
     ambassador_rellena_form:"Llena el formulario para crear la carta.",
+
+    // --- DONATE CARD --- 
+    donatecard_support:"Apoya a la fuente",
+    donatecard_donations:"Las donaciones recargan el tanque para todos",
+    donatecard_proceeds:"100% de las donaciones van directamente a las billeteras de distribución",
 };

@@ -186,4 +186,9 @@ export const en = {
     ambassador_regalo_listo:"GIFT READY",
     ambassador_no_codigo:"NO CODE GENERATED",
     ambassador_rellena_form:"Fill the form to create a card",
+
+    // --- DONATE CARD --- 
+    donatecard_support:"Support the Faucet",
+    donatecard_donations:"Donations refill the tank for everyone.",
+    donatecard_proceeds:"100% of donations go directly to the distribution hot wallets.",
 };

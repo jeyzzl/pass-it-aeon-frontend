@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
+import DonateCard from '@/components/DonateCard';
 
 interface FAQItem {
   question: string;
@@ -214,6 +215,11 @@ export default function FAQPage() {
               </a>
             </div>
           </div>
+        </div>
+
+        <div className="space-y-6">
+          {/* The Donate Widget */}
+          <DonateCard className="shadow-xl shadow-amber-900/5" /> 
         </div>
 
         {/* Footer */}

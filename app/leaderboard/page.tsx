@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
+import DonateCard from '@/components/DonateCard';
 
 interface LeaderboardEntry {
   wallet_address: string;
@@ -68,7 +69,13 @@ export default function LeaderboardPage() {
             </table>
           </div>
         )}
+
+        <div className="mt-10 space-y-6">
+          {/* The Donate Widget */}
+          <DonateCard className="shadow-xl shadow-amber-900/5" /> 
+        </div>
       </div>
+      
     </div>
   );
 }
